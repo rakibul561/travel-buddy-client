@@ -1,93 +1,80 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { Button } from "./ui/button";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
-// Simple local Input component to avoid missing import for "./ui/input"
-const Input = (props: any) => {
-  const { className = "", ...rest } = props;
-  return (
-    <input
-      className={`w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
-      {...rest}
-    />
-  );
-};
-
+import { registerUser } from "@/services/auth/registerUser";
 
 const RegisterForm = () => {
+  const fileRef = useRef<HTMLInputElement | null>(null);
 
+  const [state, formAction, isPending] = useActionState(registerUser, null);
 
+  console.log("state is =>", state);
 
   return (
-    <form >
-      <FieldGroup>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Name */}
-          <Field>
-            <FieldLabel htmlFor="name">Full Name</FieldLabel>
-            <Input id="name" name="name" type="text" placeholder="John Doe" />
-           
-          </Field>
-          {/* Address */}
-          <Field>
-            <FieldLabel htmlFor="address">Address</FieldLabel>
-            <Input
-              id="address"
-              name="address"
-              type="text"
-              placeholder="123 Main St"
-            />
+    <form action={formAction} className="max-w-md mx-auto space-y-4">
+      
+      <input
+        name="name"
+        placeholder="name"
+        required
+        className="w-full border p-2 rounded"
+      />
+      <input
+        name="fullName"
+        placeholder="Full Name"
+        required
+        className="w-full border p-2 rounded"
+      />
+      <input
+        name="email"
+        type="email"
+        placeholder="Email"
+        required
+        className="w-full border p-2 rounded"
+      />
 
-            
-          </Field>
-          {/* Email */}
-          <Field>
-            <FieldLabel htmlFor="email">Email</FieldLabel>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="m@example.com"
-            />
+      <input
+        name="password"
+        type="password"
+        placeholder="Password"
+        required
+        className="w-full border p-2 rounded"
+      />
 
-           
-          </Field>
-          {/* Password */}
-          <Field>
-            <FieldLabel htmlFor="password">Password</FieldLabel>
-            <Input id="password" name="password" type="password" />
+      <input
+        name="confirmPassword"
+        type="password"
+        placeholder="Confirm Password"
+        required
+        className="w-full border p-2 rounded"
+      />
 
-         
-          </Field>
-          {/* Confirm Password */}
-          <Field className="md:col-span-2">
-            <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-            />
+      {/* 🔥 Profile Image */}
+      <input
+        ref={fileRef}
+        name="file"
+        type="file"
+        accept="image/*"
+        required
+        className="w-full"
+      />
 
-          
-          </Field>
-        </div>
-        <FieldGroup className="mt-4">
-          <Field>
-            <Button type="submit" className="bg-sky-blue text-white">
-              Register
-            </Button>
+      <Button type="submit" disabled={isPending} className="w-full">
+        {isPending ? "Creating..." : "Create Account"}
+      </Button>
 
-            <FieldDescription className="px-6 text-center">
-              Already have an account?{" "}
-              <a href="/login" className="text-blue-600 hover:underline">
-                Sign in
-              </a>
-            </FieldDescription>
-          </Field>
-        </FieldGroup>
-      </FieldGroup>
+      {state?.success === false && (
+        <p className="text-red-500 text-sm text-center">
+          {state.message}
+        </p>
+      )}
+
+      {state?.success && (
+        <p className="text-green-600 text-sm text-center">
+          Account created successfully 🎉
+        </p>
+      )}
     </form>
   );
 };

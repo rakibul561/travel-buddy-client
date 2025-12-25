@@ -48,7 +48,6 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
             <Button type="submit">
               <span>Sign in</span>
             </Button>
-
             <FieldDescription className="px-6 text-center">
               Don&apos;t have an account?{" "}
               <a href="/register" className="text-blue-600 hover:underline">
