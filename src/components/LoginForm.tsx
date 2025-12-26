@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
@@ -18,15 +18,24 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "./ui/alert";
+import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
+  
+
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
-  // ✅ useActionState
+
   const [state, formAction, isPending] = useActionState(loginUser, null);
 
+    useEffect(() => {
+    if (state?.success) {
+      router.push("/");
+    }
+  }, [state, router]);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-100 via-pink-100 to-blue-100 flex items-center justify-center px-4">
+    <div className="bg-gradient-to-br from-orange-100 via-pink-100 to-blue-100 flex items-center justify-center px-4">
       <Card className="w-full max-w-md rounded-3xl border border-white/40 bg-white/80 backdrop-blur-xl shadow-2xl">
         {/* Header */}
         <CardHeader className="text-center space-y-3 pb-2">

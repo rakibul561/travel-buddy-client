@@ -4,6 +4,7 @@
 
 import { parse } from "cookie";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const loginUser = async (
   _currentState: any,
@@ -42,12 +43,8 @@ export const loginUser = async (
         }
         if(parsedCookie["refreshToken"]) {
           refreshTokenObject = parsedCookie
-
         }
-
       }); 
-
-
 
     } else {
       throw new Error("no set cookie found.");
@@ -84,10 +81,9 @@ export const loginUser = async (
             path: refreshTokenObject.Path || "/",
             sameSite: (refreshTokenObject['SameSite'] as any) || "none",
         });
+     
 
-
-
-
+       
 
 
     console.log({
@@ -102,4 +98,9 @@ export const loginUser = async (
       message: "Login failed. Please try again.",
     };
   }
+
+   redirect("/dashboard");
+
+
+
 };

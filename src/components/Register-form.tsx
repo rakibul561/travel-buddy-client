@@ -12,6 +12,8 @@ import {
   Globe,
 } from "lucide-react";
 import { registerUser } from "@/services/auth/registerUser";
+import toast from "react-hot-toast";
+import { redirect, useRouter } from "next/navigation";
 
 const RegisterForm = () => {
  
@@ -33,7 +35,9 @@ const RegisterForm = () => {
       setPreviewImage(reader.result as string);
     };
     reader.readAsDataURL(file);
-  };
+  }; 
+
+    const router = useRouter();
 
   // 🔹 submit handler
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -44,14 +48,12 @@ const RegisterForm = () => {
     try {
       const formData = new FormData(e.currentTarget);
       const result = await registerUser(null, formData);
-
-     
-
       if (result?.success) {
-     
         formRef.current?.reset();
         setPreviewImage(null);
         setState(null);
+        toast.success("Registration successful!");
+        router.push("/login");
       } else {
         setState(result);
       }
@@ -67,8 +69,8 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-blue-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
+    <div className=" bg-gradient-to-br from-orange-50 via-pink-50 to-blue-50 flex items-center justify-center p-4">
+      <div className=" w-full">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
@@ -206,6 +208,15 @@ const RegisterForm = () => {
             >
               {isPending ? "Creating..." : "Create Account"}
             </button>
+            <p className="text-sm text-muted-foreground text-center">
+              Already&apos; have an account please sign in?{" "}
+              <a
+                href="/login"
+                className="font-semibold text-pink-600 hover:underline"
+              >
+                Sign in
+              </a>
+            </p>
 
             {/* Messages */}
             {state?.success === false && (

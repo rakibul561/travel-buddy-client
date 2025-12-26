@@ -1,6 +1,6 @@
 "use client"
 import { DestinationCard } from '@/components/DestinationCard'
-import { Navigation } from '@/components/Navigation'
+
 import { ReviewCard } from '@/components/ReviewCard'
 import { TravelerProfile } from '@/components/TravelerProfile'
 import { Search, ArrowRight, Sparkles } from 'lucide-react'
@@ -8,7 +8,7 @@ import { Search, ArrowRight, Sparkles } from 'lucide-react'
 export function HomePage() {
   return (
     <div className="min-h-screen bg-cream font-sans overflow-x-hidden">
-      <Navigation />
+     
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 md:px-8 overflow-hidden">
