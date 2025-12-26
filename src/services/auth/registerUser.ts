@@ -22,9 +22,12 @@ export const registerUser = async (_: any, formData: FormData) => {
       password,
     };
 
+   
+
     const finalFormData = new FormData();
     finalFormData.append("file", file as File);
     finalFormData.append("data", JSON.stringify(registerData));
+
 
     const res = await fetch(
       "http://localhost:5000/api/v1/users/register",
@@ -33,6 +36,8 @@ export const registerUser = async (_: any, formData: FormData) => {
         body: finalFormData,
       }
     );
+
+    console.log(res)
 
     return await res.json();
   } catch (error) {
