@@ -1,9 +1,9 @@
-
+import React from 'react'
 
 const page = () => {
   return (
     <div>
-       <h2> all travel managment</h2>
+
     </div>
   )
 }

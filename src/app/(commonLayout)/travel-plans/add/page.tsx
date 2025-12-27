@@ -1,9 +1,8 @@
 
-
 const page = () => {
   return (
     <div>
-       <h2> all travel managment</h2>
+      <h2> travel added </h2>
     </div>
   )
 }

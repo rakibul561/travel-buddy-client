@@ -1,9 +1,8 @@
 
-
 const page = () => {
   return (
     <div>
-       <h2> all travel managment</h2>
+      <h1> Dynamic router </h1>
     </div>
   )
 }

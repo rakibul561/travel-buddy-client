@@ -3,7 +3,7 @@
 const page = () => {
   return (
     <div>
-       <h2> all travel managment</h2>
+      <h2> travel plans</h2>
     </div>
   )
 }
