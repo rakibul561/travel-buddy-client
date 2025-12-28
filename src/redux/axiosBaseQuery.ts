@@ -14,22 +14,23 @@ export const axiosBaseQuery =
     unknown,
     unknown
   > =>
-  async ({ url, method, data, params, headers }) => {
+  async ({ url, method = "GET", data, params, headers }) => {
     try {
       const result = await axiousInstance({
-        url: url,
+        url,
         method,
         data,
         params,
         headers,
       });
+
       return { data: result.data };
-    } catch (axiosError) {
-      const err = axiosError as AxiosError;
+    } catch (error) {
+      const err = error as AxiosError;
       return {
         error: {
           status: err.response?.status,
-          data: err.response?.data || err.message,
+          data: err.response?.data ?? err.message,
         },
       };
     }

@@ -12,6 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useUserInfoQuery } from "../../redux/feature/auth/auth.api";
 import LogoutButton from "./Logout";
 
 const navLinks = [
@@ -25,7 +26,16 @@ type Props = {
   isLoggedIn: boolean;
 };
 
+
+
+
+
 export default function NavbarClient({ isLoggedIn }: Props) {
+
+  const {data} = useUserInfoQuery(undefined);
+  console.log("the user data is ",data)
+
+
   const [open, setOpen] = useState(false);
 
   return (

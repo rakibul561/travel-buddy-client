@@ -23,27 +23,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Navbar />
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ReduxProvider>
-        {children}
+          {/* ✅ NOW Navbar has Redux context */}
+          <Navbar />
+
+          {children}
+
+          <Toaster position="top-right" reverseOrder={false} />
+          <Footer />
         </ReduxProvider>
-
-        <Toaster
-        position="top-right"
-        reverseOrder={false}
-     />
-     <Footer></Footer>
-
-
-
       </body>
     </html>
   );
