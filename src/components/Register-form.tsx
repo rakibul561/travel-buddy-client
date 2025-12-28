@@ -1,31 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useRef } from "react";
+
 import {
   Camera,
-  User,
-  Mail,
-  Lock,
   Eye,
   EyeOff,
   Globe,
+  Lock,
+  Mail,
+  User,
 } from "lucide-react";
-import { registerUser } from "@/services/auth/registerUser";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { redirect, useRouter } from "next/navigation";
+import { useRegisterMutation } from "../redux/feature/auth/auth.api";
 
 const RegisterForm = () => {
- 
+  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [isPending, setIsPending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [state, setState] = useState<any>(null);
 
-  // 🔹 image preview
+  const [register, { isLoading }] = useRegisterMutation();
+
+  // 🔹 Image preview
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -35,60 +37,69 @@ const RegisterForm = () => {
       setPreviewImage(reader.result as string);
     };
     reader.readAsDataURL(file);
-  }; 
-
-    const router = useRouter();
-
-  // 🔹 submit handler
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsPending(true);
-    setState(null); 
-
-    try {
-      const formData = new FormData(e.currentTarget);
-      const result = await registerUser(null, formData);
-      if (result?.success) {
-        formRef.current?.reset();
-        setPreviewImage(null);
-        setState(null);
-        toast.success("Registration successful!");
-        router.push("/login");
-      } else {
-        setState(result);
-      }
-    } catch (error) {
-      console.error("Registration error:", error);
-      setState({
-        success: false,
-        message: "Something went wrong. Please try again.",
-      });
-    } finally {
-      setIsPending(false);
-    }
   };
 
+  // 🔹 Submit
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setState(null);
+
+  try {
+    const form = e.currentTarget;
+    const rawFormData = new FormData(form);
+
+    const file = rawFormData.get("file");
+
+    const data = {
+      name: rawFormData.get("name"),
+      fullName: rawFormData.get("fullName"),
+      email: rawFormData.get("email"),
+      password: rawFormData.get("password"),
+      role: "USER",
+    };
+
+    const formData = new FormData();
+    if (file) {
+      formData.append("file", file as File);
+    }
+    formData.append("data", JSON.stringify(data));
+
+    const res = await register(formData).unwrap();
+    console.log("REGISTER RESPONSE:", res);
+
+    toast.success("Registration successful 🎉");
+    formRef.current?.reset();
+    setPreviewImage(null);
+    router.push("/login");
+
+  } catch (error: any) {
+    console.error("Register error:", error);
+
+    const message =
+      error?.data?.message || "Registration failed";
+
+    toast.error(message);
+    setState({
+      success: false,
+      message,
+    });
+  }
+};
+
+
   return (
-    <div className=" bg-gradient-to-br from-orange-50 via-pink-50 to-blue-50 flex items-center justify-center p-4">
-      <div className=" w-full">
+    <div className="flex items-center justify-center p-4 bg-gradient-to-br from-orange-50 via-pink-50 to-blue-50">
+      <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-              <span className="text-2xl">👋</span>
-            </div>
-            <h1 className="text-3xl font-bold">
-              Hello
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-orange-500">
-                Travel
-              </span>
-            </h1>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Join 50,000+ happy travelers
-          </h2>
-          <p className="text-gray-600">
-            Start your adventure with friends! 🌍
+          <h1 className="text-3xl font-bold">
+            Hello{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-orange-500">
+              Travel
+            </span>
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Start your adventure 🌍
           </p>
         </div>
 
@@ -96,13 +107,13 @@ const RegisterForm = () => {
         <form
           ref={formRef}
           onSubmit={handleSubmit}
-          className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100"
+          className="bg-white rounded-3xl shadow-xl p-8"
         >
           <div className="space-y-5">
-            {/* Profile Picture */}
-            <div className="flex justify-center mb-6">
+            {/* Profile Image */}
+            <div className="flex justify-center">
               <div className="relative">
-                <div className="w-28 h-28 rounded-full bg-gradient-to-br from-pink-100 to-blue-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-lg">
+                <div className="w-28 h-28 rounded-full bg-gray-100 overflow-hidden flex items-center justify-center">
                   {previewImage ? (
                     <img
                       src={previewImage}
@@ -114,11 +125,11 @@ const RegisterForm = () => {
                   )}
                 </div>
 
-                <label className="absolute bottom-0 right-0 w-10 h-10 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full flex items-center justify-center text-white cursor-pointer">
-                  <Camera className="w-5 h-5" />
+                <label className="absolute bottom-0 right-0 w-9 h-9 bg-pink-500 rounded-full flex items-center justify-center text-white cursor-pointer">
+                  <Camera size={18} />
                   <input
-                    name="file"
                     type="file"
+                    name="file"
                     accept="image/*"
                     className="hidden"
                     onChange={handleFileChange}
@@ -130,52 +141,52 @@ const RegisterForm = () => {
 
             {/* Username */}
             <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 name="name"
                 placeholder="Username"
                 required
-                className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
+                className="w-full pl-12 py-3 border rounded-xl bg-gray-50 focus:bg-white outline-none"
               />
             </div>
 
             {/* Full Name */}
             <div className="relative">
-              <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 name="fullName"
                 placeholder="Full Name"
                 required
-                className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
+                className="w-full pl-12 py-3 border rounded-xl bg-gray-50 focus:bg-white outline-none"
               />
             </div>
 
             {/* Email */}
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
-                name="email"
                 type="email"
+                name="email"
                 placeholder="Email"
                 required
-                className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
+                className="w-full pl-12 py-3 border rounded-xl bg-gray-50 focus:bg-white outline-none"
               />
             </div>
 
             {/* Password */}
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
-                name="password"
                 type={showPassword ? "text" : "password"}
+                name="password"
                 placeholder="Password"
                 required
-                className="w-full pl-12 pr-12 py-3.5 border-2 border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
+                className="w-full pl-12 pr-12 py-3 border rounded-xl bg-gray-50 focus:bg-white outline-none"
               />
               <button
                 type="button"
-                onClick={() => setShowPassword((p) => !p)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2"
               >
                 {showPassword ? <EyeOff /> : <Eye />}
               </button>
@@ -183,18 +194,20 @@ const RegisterForm = () => {
 
             {/* Confirm Password */}
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
-                name="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
                 placeholder="Confirm Password"
                 required
-                className="w-full pl-12 pr-12 py-3.5 border-2 border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
+                className="w-full pl-12 pr-12 py-3 border rounded-xl bg-gray-50 focus:bg-white outline-none"
               />
               <button
                 type="button"
-                onClick={() => setShowConfirmPassword((p) => !p)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+                onClick={() =>
+                  setShowConfirmPassword(!showConfirmPassword)
+                }
+                className="absolute right-4 top-1/2 -translate-y-1/2"
               >
                 {showConfirmPassword ? <EyeOff /> : <Eye />}
               </button>
@@ -203,33 +216,28 @@ const RegisterForm = () => {
             {/* Submit */}
             <button
               type="submit"
-              disabled={isPending}
-              className="w-full bg-blue-600 text-white py-3.5 rounded-xl font-semibold disabled:opacity-50"
+              disabled={isLoading}
+              className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold disabled:opacity-50"
             >
-              {isPending ? "Creating..." : "Create Account"}
+              {isLoading ? "Creating..." : "Create Account"}
             </button>
-            <p className="text-sm text-muted-foreground text-center">
-              Already&apos; have an account please sign in?{" "}
-              <a
-                href="/login"
-                className="font-semibold text-pink-600 hover:underline"
-              >
-                Sign in
-              </a>
-            </p>
 
-            {/* Messages */}
+            {/* Error */}
             {state?.success === false && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-center text-red-600 text-sm">
+              <div className="text-center text-sm text-red-600">
                 {state.message}
               </div>
             )}
 
-            {state?.success && (
-              <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center text-green-600 text-sm">
-                Account created successfully 🎉
-              </div>
-            )}
+            <p className="text-center text-sm">
+              Already have an account?{" "}
+              <a
+                href="/login"
+                className="text-pink-600 font-semibold"
+              >
+                Login
+              </a>
+            </p>
           </div>
         </form>
       </div>

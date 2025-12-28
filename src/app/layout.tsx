@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import Footer from "../components/shared/Footer";
+import ReduxProvider from "../Helpers/Provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,7 +32,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Navbar />
+        <ReduxProvider>
         {children}
+        </ReduxProvider>
 
         <Toaster
         position="top-right"
