@@ -1,8 +1,8 @@
 "use client";
 
+import { Heart, Menu } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, Heart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 

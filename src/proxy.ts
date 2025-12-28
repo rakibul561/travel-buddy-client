@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const accessToken = request.cookies.get("accessToken")?.value;
-  const role = request.cookies.get("role")?.value; 
+  const role = request.cookies.get("role")?.value;
 
   const isAuthPage =
     pathname.startsWith("/login") || pathname.startsWith("/register");
@@ -17,11 +17,9 @@ export function proxy(request: NextRequest) {
 
   const isAdminRoute = pathname.startsWith("/admin");
 
-
   if (!accessToken && (isProtectedRoute || isAdminRoute)) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
-
 
   if (accessToken && isAuthPage) {
     return NextResponse.redirect(new URL("/", request.url));
