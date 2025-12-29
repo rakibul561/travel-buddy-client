@@ -11,21 +11,38 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ChevronLeft, ChevronRight, Search, Users } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, Trash2, Users } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import { useAllUserQuery } from "../../../../../redux/feature/auth/auth.api";
+import { toast } from "react-hot-toast";
+
+import {
+  useAllUserQuery,
+  useDeleteUserMutation,
+} from "../../../../../redux/feature/auth/auth.api";
 
 const AllUser = () => {
   const [page, setPage] = useState(1);
   const limit = 7;
 
   const { data, isLoading } = useAllUserQuery({ page, limit });
+  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
 
   const users = data?.data?.data || [];
   const meta = data?.data?.meta;
 
-  console.log("ALL USERS RESPONSE:", data);
+  const handleDeleteUser = async (userId: string) => {
+    const ok = confirm("Are you sure you want to delete this user?");
+    if (!ok) return;
+
+    try {
+      await deleteUser(userId).unwrap();
+      toast.success("User deleted successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete user");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -40,7 +57,7 @@ const AllUser = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      {/* Header Section */}
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-blue-100 rounded-lg">
@@ -64,27 +81,42 @@ const AllUser = () => {
         )}
       </div>
 
-      {/* Table Card */}
+      {/* Table */}
       <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50 hover:bg-gray-50">
               <TableHead className="font-semibold text-gray-700">#</TableHead>
-              <TableHead className="font-semibold text-gray-700">Name</TableHead>
-              <TableHead className="font-semibold text-gray-700">Email</TableHead>
-              <TableHead className="font-semibold text-gray-700">Role</TableHead>
-              <TableHead className="font-semibold text-gray-700">Status</TableHead>
+              <TableHead className="font-semibold text-gray-700">
+                Name
+              </TableHead>
+              <TableHead className="font-semibold text-gray-700">
+                Email
+              </TableHead>
+              <TableHead className="font-semibold text-gray-700">
+                Role
+              </TableHead>
+              <TableHead className="font-semibold text-gray-700">
+                Status
+              </TableHead>
+              <TableHead className="font-semibold text-gray-700">
+                Action
+              </TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {users.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-12">
+                <TableCell colSpan={6} className="text-center py-12">
                   <div className="flex flex-col items-center gap-2">
                     <Search className="h-12 w-12 text-gray-300" />
-                    <p className="text-gray-500 font-medium">No users found</p>
-                    <p className="text-sm text-gray-400">Try adjusting your search</p>
+                    <p className="text-gray-500 font-medium">
+                      No users found
+                    </p>
+                    <p className="text-sm text-gray-400">
+                      Try adjusting your search
+                    </p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -97,6 +129,7 @@ const AllUser = () => {
                   <TableCell className="font-medium text-gray-600">
                     {(page - 1) * limit + index + 1}
                   </TableCell>
+
                   <TableCell>
                     <div className="flex items-center gap-3">
                       {user.profilePicture ? (
@@ -117,9 +150,11 @@ const AllUser = () => {
                       </span>
                     </div>
                   </TableCell>
+
                   <TableCell className="text-gray-600">
                     {user.email}
                   </TableCell>
+
                   <TableCell>
                     <Badge
                       variant="outline"
@@ -128,6 +163,7 @@ const AllUser = () => {
                       {user.role}
                     </Badge>
                   </TableCell>
+
                   <TableCell>
                     {user.isBlocked ? (
                       <Badge variant="destructive" className="font-medium">
@@ -138,6 +174,20 @@ const AllUser = () => {
                         Active
                       </Badge>
                     )}
+                  </TableCell>
+
+                  <TableCell>
+                    <Button
+                    className="text-red-500 "
+
+                      size="sm"
+                      variant="destructive"
+                      disabled={isDeleting}
+                      onClick={() => handleDeleteUser(user.id)}
+                    >
+                      {isDeleting ? "Deleting..." : "Delete"}
+                      <Trash2></Trash2>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))
@@ -150,11 +200,19 @@ const AllUser = () => {
       {meta && meta.totalPage > 1 && (
         <div className="flex items-center justify-between bg-white border rounded-xl p-4 shadow-sm">
           <div className="text-sm text-gray-600">
-            Showing <span className="font-semibold text-gray-900">{(page - 1) * limit + 1}</span> to{" "}
+            Showing{" "}
+            <span className="font-semibold text-gray-900">
+              {(page - 1) * limit + 1}
+            </span>{" "}
+            to{" "}
             <span className="font-semibold text-gray-900">
               {Math.min(page * limit, meta.total || 0)}
             </span>{" "}
-            of <span className="font-semibold text-gray-900">{meta.total || 0}</span> users
+            of{" "}
+            <span className="font-semibold text-gray-900">
+              {meta.total || 0}
+            </span>{" "}
+            users
           </div>
 
           <div className="flex items-center gap-2">
@@ -168,31 +226,6 @@ const AllUser = () => {
               <ChevronLeft className="h-4 w-4" />
               Previous
             </Button>
-
-            <div className="flex items-center gap-1">
-              {Array.from({ length: meta.totalPage }, (_, i) => i + 1)
-                .filter(
-                  (pageNum) =>
-                    pageNum === 1 ||
-                    pageNum === meta.totalPage ||
-                    (pageNum >= page - 1 && pageNum <= page + 1)
-                )
-                .map((pageNum, index, array) => (
-                  <div key={pageNum} className="flex items-center">
-                    {index > 0 && array[index - 1] !== pageNum - 1 && (
-                      <span className="px-2 text-gray-400">...</span>
-                    )}
-                    <Button
-                      variant={page === pageNum ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setPage(pageNum)}
-                      className="min-w-[2.5rem]"
-                    >
-                      {pageNum}
-                    </Button>
-                  </div>
-                ))}
-            </div>
 
             <Button
               variant="outline"
