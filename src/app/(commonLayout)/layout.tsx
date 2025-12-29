@@ -1,19 +1,18 @@
+// app/(commonLayout)/layout.tsx
+
+import Navbar from "../../components/shared/Navbar";
 
 
-const CummonLayout = ({ children }: { children: React.ReactNode }) => {
+export default function CommonLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r">
-        {/* <Sidebar /> */}
-      </aside>
+    <>
+     <Navbar></Navbar>
+      <main className="min-h-screen">{children}</main>
 
-      {/* Main Content */}
-      <main className="flex-1 p-6">
-        {children}
-      </main>
-    </div>
+    </>
   );
-};
-
-export default CummonLayout;
+}

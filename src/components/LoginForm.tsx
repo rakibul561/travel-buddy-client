@@ -7,7 +7,6 @@ import { useState } from "react";
 import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
-
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import Link from "next/link";
+import Logo from "../assets/Logo";
 import { useLogInMutation } from "../redux/feature/auth/auth.api";
 
 const LoginForm = ({
@@ -54,7 +54,14 @@ const LoginForm = ({
 
       toast.success("Login successful 🎉");
       setState({ success: true });
+
+      // Cookie/token set হওয়ার জন্য একটু wait করুন
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // Router দিয়ে redirect করুন এবং page refresh করুন
       router.push("/");
+      router.refresh();
+
     } catch (error: any) {
       console.error("Login error:", error);
 
@@ -77,14 +84,11 @@ const LoginForm = ({
       <Card className="w-full max-w-md rounded-3xl border border-white/40 bg-white/80 backdrop-blur-xl shadow-2xl">
         {/* Header */}
         <CardHeader className="text-center space-y-3 pb-2">
-          <div className="mx-auto h-12 w-12 rounded-full bg-gradient-to-r from-pink-500 to-orange-500 flex items-center justify-center text-white text-xl">
-            🌍
-          </div>
+          <span className="text-center justify-center lg:ml-32">
+            <Logo />
+          </span>
           <CardTitle className="text-3xl font-extrabold tracking-tight">
-            Hello
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-orange-500">
-              Travel
-            </span>
+            <span className="text-4xl font-bold text-[#00DC33]">Travel</span>
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             Welcome back! Continue your adventure
@@ -132,28 +136,34 @@ const LoginForm = ({
             {/* Error */}
             {state?.success === false && (
               <Alert variant="destructive">
-                <AlertDescription>
-                  {state.message}
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {/* Success */}
-            {state?.success && (
-              <Alert className="border-green-500 text-green-700 bg-green-50">
-                <AlertDescription>
-                  Login successful 🎉
-                </AlertDescription>
+                <AlertDescription>{state.message}</AlertDescription>
               </Alert>
             )}
           </CardContent>
+
+          <div className="relative text-center mt-4 text-sm">
+            <span className="relative z-10 bg-background px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
+
+          <Button
+            onClick={() =>
+              window.open("http://localhost:5000/api/v1/users/auth/google")
+            }
+            type="button"
+            variant="outline"
+            className="w-full mt-4 cursor-pointer text-black font-bold"
+          >
+            Login with Google
+          </Button>
 
           {/* Footer */}
           <CardFooter className="flex flex-col gap-4 pt-2">
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 text-base font-semibold bg-gradient-to-r from-pink-500 to-orange-500"
+              className="w-full h-11 text-base font-semibold bg-[#00DC33] pt-2"
             >
               {isLoading ? "Logging in..." : "Login"}
             </Button>
@@ -162,7 +172,7 @@ const LoginForm = ({
               Don&apos;t have an account?{" "}
               <Link
                 href="/register"
-                className="font-semibold text-pink-600 hover:underline"
+                className="font-semibold text-[#00DC33] hover:underline"
               >
                 Sign up
               </Link>

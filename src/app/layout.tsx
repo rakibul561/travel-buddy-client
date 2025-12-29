@@ -1,8 +1,8 @@
-import Navbar from "@/components/shared/Navbar";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import Footer from "../components/shared/Footer";
+import Navbar from "../components/shared/Navbar";
 import ReduxProvider from "../Helpers/Provider";
 import "./globals.css";
 
@@ -30,13 +30,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ReduxProvider>
-          {/* ✅ NOW Navbar has Redux context */}
-          <Navbar />
 
+         <Navbar></Navbar>
           {children}
+          <Footer></Footer>
 
           <Toaster position="top-right" reverseOrder={false} />
-          <Footer />
+
         </ReduxProvider>
       </body>
     </html>

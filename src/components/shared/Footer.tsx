@@ -1,3 +1,4 @@
+import Logo from "../../assets/Logo"
 
 
 const Footer = () => {
@@ -6,15 +7,9 @@ const Footer = () => {
       <footer className="bg-white pt-20 pb-10 px-4 md:px-8 rounded-t-[3rem]">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-1 md:col-span-1">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-10 h-10 bg-sunny rounded-full flex items-center justify-center text-white font-bold text-xl shadow-sm transform -rotate-6">
-                  H
-                </div>
-                <span className="text-2xl font-extrabold text-gray-800 tracking-tight">
-                  Hello<span className="text-coral">Travel</span>
-                </span>
-              </div>
+            <div className="col-span-1 space-y-4 md:col-span-1">
+                <span className="py-4"><Logo ></Logo></span>
+               <span className="text-4xl font-bold text-[#00DC33]">Travel</span>
               <p className="text-gray-500 font-medium">
                 Making the world feel a little smaller and a lot friendlier.
               </p>
@@ -70,7 +65,7 @@ const Footer = () => {
                   placeholder="Your email"
                   className="bg-gray-50 px-4 py-3 rounded-xl w-full font-medium focus:outline-none focus:ring-2 focus:ring-sunny"
                 />
-                <button className="bg-sunny text-yellow-900 font-bold px-4 py-3 rounded-xl hover:bg-yellow-400 transition-colors">
+                <button className="bg-[#00DC33] text-yellow-900 font-bold px-4 py-3 rounded-xl hover:bg-yellow-400 transition-colors">
                   Go
                 </button>
               </div>

@@ -14,7 +14,9 @@ import {
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import Logo from "../assets/Logo";
 import { useRegisterMutation } from "../redux/feature/auth/auth.api";
+import { CardHeader, CardTitle } from "./ui/card";
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -91,17 +93,15 @@ const RegisterForm = () => {
     <div className="flex items-center justify-center p-4 bg-gradient-to-br from-orange-50 via-pink-50 to-blue-50">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold">
-            Hello{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-orange-500">
-              Travel
-            </span>
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Start your adventure 🌍
+        <CardHeader className="text-center space-y-3 pb-2">
+              <span className="text-center justify- lg:ml-44 "> <Logo></Logo></span>
+          <CardTitle className="text-3xl font-extrabold tracking-tight">
+               <span className="text-4xl font-bold text-[#00DC33]">Travel</span>
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Welcome back! Continue your adventure
           </p>
-        </div>
+        </CardHeader>
 
         {/* Form */}
         <form
@@ -217,7 +217,7 @@ const RegisterForm = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold disabled:opacity-50"
+              className="w-full bg-[#00DC33] py-3 rounded-xl font-semibold disabled:opacity-50"
             >
               {isLoading ? "Creating..." : "Create Account"}
             </button>
@@ -233,7 +233,7 @@ const RegisterForm = () => {
               Already have an account?{" "}
               <a
                 href="/login"
-                className="text-pink-600 font-semibold"
+                className="text-[#00DC33] font-semibold"
               >
                 Login
               </a>
