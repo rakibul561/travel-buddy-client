@@ -25,8 +25,8 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (accessToken && isAdminRoute && role !== "ADMIN") {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  if (accessToken && isAdminRoute && role == "ADMIN") {
+    return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
 
   return NextResponse.next();

@@ -13,10 +13,10 @@ import {
 } from "../../redux/feature/auth/auth.api";
 
 const baseNavLinks = [
-  { name: "Destinations", href: "/destinations" },
+  { name: "About", href: "/find-travel-buddy" },
+  { name: "Find Travel Buddy", href: "/find-travel-buddy" },
   { name: "Explore Travelers", href: "/explore-travelers" },
-  { name: "Stories", href: "/stories" },
-  { name: "About", href: "/about" },
+
 ];
 
 export default function NavbarClient() {
@@ -46,12 +46,11 @@ export default function NavbarClient() {
     return <div></div>;
   }
 
-  // User role এর উপর ভিত্তি করে nav links build করুন
   const getNavLinks = () => {
     const links = [...baseNavLinks];
 
     if (userRole === "ADMIN") {
-      links.push({ name: "Dashboard", href: "/dashboard" });
+      links.push({ name: "Dashboard", href: "/admin/dashboard" });
     } else if (userRole === "USER") {
       links.push({ name: "Dashboard", href: "/user/dashboard" });
     }

@@ -34,6 +34,14 @@ export const authApi = baseApi.injectEndpoints({
       }),
       providesTags: ["USER"],
     }),
+    allUser: builder.query({
+      query: ({ page, limit }) => ({
+        url: "/users",
+        method: "GET",
+        params: { page, limit },
+      }),
+      providesTags: ["USER"],
+    }),
   }),
 });
 export const {
@@ -41,4 +49,5 @@ export const {
   useUserInfoQuery,
   useRegisterMutation,
   useLogOutMutation,
+  useAllUserQuery,
 } = authApi;

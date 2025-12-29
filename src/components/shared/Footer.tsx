@@ -1,7 +1,19 @@
-import Logo from "../../assets/Logo"
+"use client"
+import { usePathname } from "next/navigation";
+import Logo from "../../assets/Logo";
 
 
 const Footer = () => {
+
+   const pathName = usePathname();
+
+   if(pathName.includes("/dashboard")){
+    return <div></div>
+   }
+
+
+
+
   return (
     <div>
       <footer className="bg-white pt-20 pb-10 px-4 md:px-8 rounded-t-[3rem]">
