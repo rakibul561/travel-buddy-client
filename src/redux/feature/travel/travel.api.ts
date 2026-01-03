@@ -15,6 +15,14 @@ export const travelApi = baseApi.injectEndpoints({
       invalidatesTags: ["TRAVEL"],
     }),
 
+    getSingleTravels: builder.query<any, string>({
+      query: (id) => ({
+        url: `/travel-plans/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["TRAVEL"],
+    }),
+
     // 🔹 Get all travels (for user/admin)
     getAllTravels: builder.query<
       any,
@@ -33,6 +41,15 @@ export const travelApi = baseApi.injectEndpoints({
         params,
       }),
       providesTags: ["TRAVEL"],
+    }),
+
+    sendJoinRequest: builder.mutation<any, { travelPlanId: string }>({
+      query: (body) => ({
+        url: "/join-requests",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["TRAVEL"],
     }),
 
     // 🔹 Match Travel
@@ -79,4 +96,6 @@ export const {
   useCompleteTravelMutation,
   useGetMyTravelsQuery,
   useGetAllpaymentQuery,
+  useGetSingleTravelsQuery,
+  useSendJoinRequestMutation,
 } = travelApi;

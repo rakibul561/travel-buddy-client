@@ -15,6 +15,7 @@ import {
   Users,
   XCircle,
 } from 'lucide-react';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function ExploreTravelers() {
@@ -225,9 +226,12 @@ export default function ExploreTravelers() {
                       </div>
                     )}
 
-                    <button className="w-full mt-4 py-3 bg-gradient-to-r from-[#00DC33] to-[#00C32D] text-white font-semibold rounded-xl shadow-lg hover:scale-105 transition">
-                      View Details
-                    </button>
+                    <Link href={`/explore-travelers/${plan.id}`}>
+  <button className="w-full mt-4 py-3 bg-gradient-to-r from-[#00DC33] to-[#00C32D] text-white font-semibold rounded-xl shadow-lg hover:scale-105 transition">
+    View Details
+  </button>
+</Link>
+
                   </div>
                 </div>
               ))}
