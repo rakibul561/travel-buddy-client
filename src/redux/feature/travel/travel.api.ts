@@ -30,7 +30,7 @@ export const travelApi = baseApi.injectEndpoints({
       query: (params) => ({
         url: "/travel-plans",
         method: "GET",
-        params, // 🔥 MAGIC – automatically ?page=1&search=paris
+        params,
       }),
       providesTags: ["TRAVEL"],
     }),

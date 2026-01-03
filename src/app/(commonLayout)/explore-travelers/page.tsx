@@ -19,23 +19,35 @@ import { useEffect, useState } from 'react';
 
 export default function ExploreTravelers() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [filterType, setFilterType] = useState<'ALL' | string>('ALL');
   const [page, setPage] = useState(1);
   const limit = 6;
 
+  /* ---------------- Debouncing Search ---------------- */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setPage(1);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  /* ---------------- Reset Page on Filter Change ---------------- */
+  useEffect(() => {
+    setPage(1);
+  }, [filterType]);
+
   /* ---------------- Query Params ---------------- */
   const queryParams: any = { page, limit };
-  if (searchTerm) queryParams.search = searchTerm;
+  if (debouncedSearch) queryParams.search = debouncedSearch;
   if (filterType !== 'ALL') queryParams.travelType = filterType;
 
   const { data, isLoading, isError } = useGetAllTravelsQuery(queryParams);
 
   const travelPlans = data?.data?.data || [];
   const meta = data?.meta;
-
-  useEffect(() => {
-    setPage(1);
-  }, [searchTerm, filterType]);
 
   /* ---------------- Helpers ---------------- */
   const getStatusColor = (status: string) =>
@@ -123,12 +135,11 @@ export default function ExploreTravelers() {
               <option value="FAMILY">Family</option>
               <option value="COUPLE">Couple</option>
               <option value="FRIENDS">Friends</option>
-              <option value="BUSINESS">Business</option>
             </select>
           </div>
         </div>
 
-        {/* ---------- Cards (SAME AS MyTravelPlans) ---------- */}
+        {/* ---------- Cards ---------- */}
         {travelPlans.length > 0 ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
