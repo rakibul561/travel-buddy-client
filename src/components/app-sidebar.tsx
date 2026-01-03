@@ -26,7 +26,7 @@ import Link from "next/link";
 const adminNavItems = [
   {
     title: "OverView",
-    url: "/dashboard",
+    url: "/admin/dashboard/analytices",
     icon: Home,
     isActive: true,
   },

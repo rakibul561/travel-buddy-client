@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { baseApi } from "../../baseApi";
@@ -15,10 +16,21 @@ export const travelApi = baseApi.injectEndpoints({
     }),
 
     // 🔹 Get all travels (for user/admin)
-    getAllTravels: builder.query({
-      query: () => ({
+    getAllTravels: builder.query<
+      any,
+      {
+        page?: number;
+        limit?: number;
+        search?: string;
+        travelType?: string;
+        sortBy?: string;
+        sortOrder?: "asc" | "desc";
+      }
+    >({
+      query: (params) => ({
         url: "/travel-plans",
         method: "GET",
+        params, // 🔥 MAGIC – automatically ?page=1&search=paris
       }),
       providesTags: ["TRAVEL"],
     }),
@@ -32,7 +44,6 @@ export const travelApi = baseApi.injectEndpoints({
       }),
       providesTags: ["TRAVEL"],
     }),
-
     // 🔹 Complete Travel
     completeTravel: builder.mutation({
       query: (travelId: string) => ({
@@ -44,13 +55,13 @@ export const travelApi = baseApi.injectEndpoints({
 
     // 🔹 My Travels (optional but recommended)
     getMyTravels: builder.query({
-      query: ({ page, limit }) => ({
+      query: () => ({
         url: "/travel-plans/my",
         method: "GET",
-        params: { page, limit },
       }),
       providesTags: ["TRAVEL"],
     }),
+
     getAllpayment: builder.query({
       query: () => ({
         url: "/payment",

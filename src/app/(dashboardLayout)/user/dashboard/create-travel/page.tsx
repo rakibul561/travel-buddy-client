@@ -33,6 +33,10 @@ import { toast } from "react-hot-toast";
 import { useCreateTravelMutation } from "../../../../../redux/feature/travel/travel.api";
 
 export default function CreateTravelPage() {
+
+
+
+
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -142,7 +146,7 @@ export default function CreateTravelPage() {
       console.log("API RESPONSE:", res);
 
       toast.success("Travel plan created successfully 🚀");
-      router.push("/travels");
+      router.push("/travel-plans");
     } catch (error) {
       console.error("CREATE TRAVEL ERROR:", error);
       toast.error("Something went wrong");

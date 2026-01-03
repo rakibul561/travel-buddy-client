@@ -176,7 +176,7 @@ const AllUser = () => {
                     )}
                   </TableCell>
 
-                  <TableCell>
+                  <TableCell>c
                     <Button
                     className="text-red-500 "
 

@@ -12,58 +12,66 @@ import {
   useUserInfoQuery,
 } from "../../redux/feature/auth/auth.api";
 
-const baseNavLinks = [
-  { name: "About", href: "/find-travel-buddy" },
-  { name: "Find Travel Buddy", href: "/find-travel-buddy" },
-  { name: "Explore Travelers", href: "/explore-travelers" },
-
-];
-
 export default function NavbarClient() {
   const dispatch = useDispatch();
   const router = useRouter();
   const pathName = usePathname();
   const [logout] = useLogOutMutation();
 
-  // refetchOnMountOrArgChange এবং refetch add করা হয়েছে
   const { data, isLoading, refetch } = useUserInfoQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
 
-  // pathname change হলে user info refetch করুন
   useEffect(() => {
     refetch();
   }, [pathName, refetch]);
 
-  if (isLoading) {
-    return null;
-  }
+  if (isLoading) return null;
 
-  const userRole = data?.data?.role;
+  // Dashboard এ navbar hide
+  if (pathName.includes("/dashboard")) return null;
 
-  // Dashboard page এ navbar hide করুন
-  if (pathName.includes("/dashboard")) {
-    return <div></div>;
-  }
+  const user = data?.data;
+  const role = user?.role;
 
-  const getNavLinks = () => {
-    const links = [...baseNavLinks];
+  // =====================
+  // NAV LINKS BY ROLE
+  // =====================
 
-    if (userRole === "ADMIN") {
-      links.push({ name: "Dashboard", href: "/admin/dashboard" });
-    } else if (userRole === "USER") {
-      links.push({ name: "Dashboard", href: "/user/dashboard" });
-    }
+  const loggedOutLinks = [
+    { name: "Explore Travelers", href: "/explore-travelers" },
+    { name: "Find Travel Buddy", href: "/find-travel-buddy" },
+  ];
 
-    return links;
-  };
+  const userLinks = [
+    { name: "Explore Travelers", href: "/explore-travelers" },
+    { name: "My Travel Plans", href: "/travel-plans" },
+    { name: "Profile", href: `/profile/${user?._id}` },
+    { name: " Dashboard", href: "/user/dashboard" },
+  ];
+
+  const adminLinks = [
+    { name: "Admin Dashboard", href: "/admin/dashboard" },
+    { name: "Manage Users", href: "/admin/users" },
+    { name: "Manage Travel Plans", href: "/admin/travel-plans" },
+    { name: "Profile", href: `/profile/${user?._id}` },
+  ];
+
+  const navLinks =
+    role === "ADMIN"
+      ? adminLinks
+      : role === "USER"
+      ? userLinks
+      : loggedOutLinks;
+
+  // =====================
+  // LOGOUT
+  // =====================
 
   const handleLogout = async () => {
     try {
       await logout(undefined).unwrap();
       dispatch(authApi.util.resetApiState());
-
-      // Logout এর পরে login page এ redirect করুন
       router.push("/login");
       router.refresh();
     } catch (err) {
@@ -71,18 +79,17 @@ export default function NavbarClient() {
     }
   };
 
-  const navLinks = getNavLinks();
-
   return (
     <nav className="fixed top-4 left-0 right-0 z-50 px-4">
       <div className="mx-auto max-w-7xl rounded-full bg-white/70 backdrop-blur-lg shadow-md px-8 py-3 flex items-center justify-between border">
+
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Logo />
           <span className="text-3xl font-bold text-[#00DC33]">Travel</span>
         </Link>
 
-        {/* Desktop Nav Links */}
+        {/* Nav Links */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link
@@ -97,9 +104,9 @@ export default function NavbarClient() {
           ))}
         </div>
 
-        {/* Actions */}
+        {/* Right Actions */}
         <div className="flex items-center gap-3">
-          {data?.data?.email ? (
+          {user ? (
             <Button
               onClick={handleLogout}
               variant="outline"
@@ -108,12 +115,18 @@ export default function NavbarClient() {
               Logout
             </Button>
           ) : (
-            <Button
-              asChild
-              className="rounded-full px-6 bg-[#00DC33] hover:bg-green-600 text-white"
-            >
-              <Link href="/login">Login</Link>
-            </Button>
+            <>
+              <Button asChild variant="ghost" className="rounded-full px-5">
+                <Link href="/login">Login</Link>
+              </Button>
+
+              <Button
+                asChild
+                className="rounded-full px-6 bg-[#00DC33] hover:bg-green-600 text-white"
+              >
+                <Link href="/register">Register</Link>
+              </Button>
+            </>
           )}
         </div>
       </div>

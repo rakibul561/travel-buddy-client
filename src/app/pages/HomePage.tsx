@@ -1,9 +1,7 @@
 "use client"
-import { DestinationCard } from '@/components/DestinationCard'
 
 import { ReviewCard } from '@/components/ReviewCard'
-import { TravelerProfile } from '@/components/TravelerProfile'
-import { ArrowRight, Search, Sparkles } from 'lucide-react'
+import { Search, Sparkles } from 'lucide-react'
 
 export function HomePage() {
   return (
@@ -47,7 +45,7 @@ export function HomePage() {
                 className="w-full bg-transparent border-none focus:ring-0 text-gray-700 font-bold placeholder:text-gray-400 ml-3 outline-none"
               />
             </div>
-            <button className="h-14 px-8 bg-sky-blue hover:bg-sky-blue/90 text-white rounded-full font-bold transition-all hover:shadow-lg hover:scale-105 active:scale-95">
+            <button className="h-14 px-8 bg-[#00DC33] text-white rounded-full font-bold transition-all hover:shadow-lg hover:scale-105 active:scale-95">
               Search
             </button>
           </div>
@@ -55,7 +53,7 @@ export function HomePage() {
       </section>
 
       {/* Destinations Section */}
-      <section className="py-20 px-4 md:px-8">
+      {/* <section className="py-20 px-4 md:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-end mb-12">
             <div>
@@ -106,10 +104,10 @@ export function HomePage() {
             />
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Community Section */}
-      <section className="py-20 px-4 md:px-8 bg-white rounded-[3rem] mx-4 shadow-sm">
+      {/* <section className="py-20 px-4 md:px-8 bg-white rounded-[3rem] mx-4 shadow-sm">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1 rounded-full bg-sunny/20 text-yellow-700 font-bold text-sm mb-4">
@@ -159,7 +157,7 @@ export function HomePage() {
             />
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Reviews Section */}
       <section className="py-20 px-4 md:px-8">
