@@ -42,6 +42,13 @@ export const authApi = baseApi.injectEndpoints({
       }),
       providesTags: ["USER"],
     }),
+    allUserFromDb: builder.query({
+      query: () => ({
+        url: "/users",
+        method: "GET",
+      }),
+      providesTags: ["USER"],
+    }),
 
     updateUser: builder.mutation({
       query: (formData) => ({
@@ -69,4 +76,5 @@ export const {
   useAllUserQuery,
   useDeleteUserMutation,
   useUpdateUserMutation,
+  useAllUserFromDbQuery,
 } = authApi;
