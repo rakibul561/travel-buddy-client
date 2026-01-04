@@ -44,10 +44,10 @@ export const travelApi = baseApi.injectEndpoints({
     }),
 
     sendJoinRequest: builder.mutation<any, { travelPlanId: string }>({
-      query: (body) => ({
+      query: ({ travelPlanId }) => ({
         url: "/join-requests",
         method: "POST",
-        body,
+        body: { travelPlanId },
       }),
       invalidatesTags: ["TRAVEL"],
     }),
@@ -61,6 +61,7 @@ export const travelApi = baseApi.injectEndpoints({
       }),
       providesTags: ["TRAVEL"],
     }),
+
     // 🔹 Complete Travel
     completeTravel: builder.mutation({
       query: (travelId: string) => ({
@@ -77,6 +78,18 @@ export const travelApi = baseApi.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["TRAVEL"],
+    }),
+
+    createSubscription: builder.mutation<
+      any,
+      { plan: "MONTHLY" | "YEARLY" | "FREE" }
+    >({
+      query: (body) => ({
+        url: "/payment/subscription",
+        method: "POST",
+        body: body,
+      }),
+      invalidatesTags: ["TRAVEL"],
     }),
 
     getAllpayment: builder.query({
@@ -98,4 +111,5 @@ export const {
   useGetAllpaymentQuery,
   useGetSingleTravelsQuery,
   useSendJoinRequestMutation,
+  useCreateSubscriptionMutation,
 } = travelApi;

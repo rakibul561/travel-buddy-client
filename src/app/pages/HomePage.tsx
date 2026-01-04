@@ -2,6 +2,7 @@
 
 import { ReviewCard } from '@/components/ReviewCard'
 import { Search, Sparkles } from 'lucide-react'
+import SubscriptionSection from '../../components/subscription/SubscriptionSection'
 
 export function HomePage() {
   return (
@@ -52,112 +53,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Destinations Section */}
-      {/* <section className="py-20 px-4 md:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">
-                Popular Destinations
-              </h2>
-              <p className="text-gray-500 font-medium">
-                Curated spots for your next group trip
-              </p>
-            </div>
-            <button className="hidden md:flex items-center gap-2 text-coral font-bold hover:gap-3 transition-all">
-              View all places <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <DestinationCard
-              title="Kyoto Stroll"
-              location="Japan"
-              price="$1,200"
-              image="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              tags={['Culture', 'Food', 'Nature']}
-              color="coral"
-            />
-            <DestinationCard
-              title="Bali Retreat"
-              location="Indonesia"
-              price="$850"
-              image="https://images.unsplash.com/photo-1537996194471-e657df975ab4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              tags={['Relax', 'Beach', 'Yoga']}
-              color="fresh-green"
-            />
-            <DestinationCard
-              title="Alpine Hike"
-              location="Switzerland"
-              price="$2,100"
-              image="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              tags={['Adventure', 'Mountains']}
-              color="sky-blue"
-            />
-            <DestinationCard
-              title="Lisbon Vibes"
-              location="Portugal"
-              price="$1,100"
-              image="https://images.unsplash.com/photo-1590725140246-20ac70da4207?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              tags={['City', 'History', 'Food']}
-              color="sunny"
-            />
-          </div>
-        </div>
-      </section> */}
-
-      {/* Community Section */}
-      {/* <section className="py-20 px-4 md:px-8 bg-white rounded-[3rem] mx-4 shadow-sm">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1 rounded-full bg-sunny/20 text-yellow-700 font-bold text-sm mb-4">
-              Our Community
-            </span>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-4">
-              Meet fellow travelers
-            </h2>
-            <p className="text-gray-500 font-medium max-w-2xl mx-auto">
-              Connect with diverse people from around the world. Share stories,
-              make memories, and find your travel buddies.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <TravelerProfile
-              name="Sarah Chen"
-              role="Foodie Explorer"
-              bio="Always looking for the best street food. Let's eat our way through Asia!"
-              image="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              interests={['Food', 'Photography', 'Urban']}
-              color="coral"
-            />
-            <TravelerProfile
-              name="Marcus Johnson"
-              role="Adventure Seeker"
-              bio="Hiking, climbing, and surfing. If it gets your heart racing, I'm in."
-              image="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              interests={['Hiking', 'Surfing', 'Nature']}
-              color="sky-blue"
-            />
-            <TravelerProfile
-              name="Elena Rodriguez"
-              role="Culture Enthusiast"
-              bio="History buff and museum lover. I want to learn everything about local traditions."
-              image="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              interests={['History', 'Art', 'Museums']}
-              color="sunny"
-            />
-            <TravelerProfile
-              name="David Kim"
-              role="Digital Nomad"
-              bio="Working remotely from cafes around the world. Coffee is my fuel."
-              image="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              interests={['Tech', 'Coffee', 'Startups']}
-              color="fresh-green"
-            />
-          </div>
-        </div>
-      </section> */}
+      <SubscriptionSection></SubscriptionSection>
 
       {/* Reviews Section */}
       <section className="py-20 px-4 md:px-8">

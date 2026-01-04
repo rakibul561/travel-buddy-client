@@ -62,11 +62,7 @@ const userNavItems = [
     url: "/user/dashboard/match-travel",
     icon: MapPin,
   },
-  {
-    title: "Join-Travel",
-    url: "/user/dashboard/join-request",
-    icon: MapPin,
-  },
+
     {
     title: "My-travel",
     url: "/user/dashboard/my-travels",
