@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from '@/components/ui/button';
+"use client";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -9,170 +11,142 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useUpdateUserMutation } from '@/redux/feature/auth/auth.api';
-import { Camera, Lock, Sparkles, User } from 'lucide-react';
-import toast from 'react-hot-toast';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useUpdateUserMutation, useUserInfoQuery } from "@/redux/feature/auth/auth.api"; // ✅ Add useUserInfoQuery
+import { Camera, Sparkles, User } from "lucide-react";
+import { useState } from "react"; // ✅ Add useState
+import toast from "react-hot-toast";
 
 export default function UpdateProfile() {
+  const [open, setOpen] = useState(false); // ✅ Control dialog state
+  const { refetch } = useUserInfoQuery(undefined); // ✅ Add refetch
   const [updateUser, { isLoading }] = useUpdateUserMutation();
+
+  console.log( "the update user is", updateUser)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const form = e.currentTarget;
     const rawFormData = new FormData(form);
-
-    // ✅ clean FormData (IMPORTANT)
     const formData = new FormData();
 
-    // -------- Full Name --------
-    const fullName = rawFormData.get('fullName');
-    if (fullName && fullName.toString().trim() !== '') {
-      formData.append('fullName', fullName.toString());
+    // ---------------- FULL NAME ----------------
+    const fullName = rawFormData.get("fullName");
+    if (fullName && fullName.toString().trim()) {
+      formData.append("fullName", fullName.toString().trim());
     }
 
-    // -------- Password --------
-    const oldPassword = rawFormData.get('oldPassword');
-    const newPassword = rawFormData.get('newPassword');
+    // ---------------- PASSWORD ----------------
+    const oldPassword = rawFormData.get("oldPassword");
+    const newPassword = rawFormData.get("newPassword");
 
     if (oldPassword && newPassword) {
-      formData.append('oldPassword', oldPassword.toString());
-      formData.append('newPassword', newPassword.toString());
+      formData.append("oldPassword", oldPassword.toString());
+      formData.append("newPassword", newPassword.toString());
     }
 
-    // -------- File (ONLY if selected) --------
-    const file = rawFormData.get('file') as File;
+    // ---------------- FILE ----------------
+    const file = rawFormData.get("file") as File;
     if (file && file.size > 0) {
-      formData.append('file', file);
+      formData.append("file", file);
     }
 
-    // 🔍 DEBUG
-    console.log('📤 Sending Clean FormData:');
-    for (const [key, value] of formData.entries()) {
-      console.log(`  ${key}:`, value);
+    // ❌ Prevent empty submit
+    if ([...formData.entries()].length === 0) {
+      toast.error("❌ Nothing to update");
+      console.warn("⚠️ Empty FormData – request cancelled");
+      return;
     }
+
+    // 🔍 DEBUG: Sending data
+    console.group("📤 UPDATE PROFILE REQUEST");
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+    console.groupEnd();
 
     try {
       const response = await updateUser(formData).unwrap();
 
-      console.log('✅ Update Success Response:', response);
+      // 🔍 DEBUG: Response inspection
+      console.group("✅ UPDATE PROFILE RESPONSE");
+      console.log("Full response:", response);
+      console.log("Updated name:", response?.data?.fullName);
+      console.log("Updated image:", response?.data?.profilePicture);
+      console.log("Updated at:", response?.data?.updatedAt);
+      console.groupEnd();
 
-      toast.success('✅ Profile updated successfully');
+      toast.success("✅ Profile updated successfully");
+
+      // ✅ Refetch user data to update UI
+      await refetch();
+
       form.reset();
+      setOpen(false); // ✅ Close dialog after success
     } catch (error: any) {
-      console.error('❌ Update Failed:', error);
-      toast.error(error?.data?.message || '❌ Failed to update profile');
+      console.error("❌ UPDATE PROFILE ERROR:", error);
+      toast.error(error?.data?.message || "❌ Failed to update profile");
     }
   };
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
-      <Dialog>
+    <div className="flex items-center justify-center p-4">
+      <Dialog open={open} onOpenChange={setOpen}> {/* ✅ Control dialog */}
         <DialogTrigger asChild>
-          <Button className="relative overflow-hidden group bg-[#00DC33] hover:bg-[#00C32D] text-white font-bold px-8 py-6 rounded-2xl shadow-2xl hover:shadow-[#00DC33]/30 transition-all duration-500 hover:scale-105">
-            <span className="relative z-10 flex items-center gap-3 text-lg">
-              <Sparkles className="h-5 w-5" />
-              Update Profile
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+          <Button className="bg-[#00DC33] hover:bg-[#00C32D] text-white px-8 py-6 rounded-2xl">
+            <Sparkles className="mr-2" /> Update Profile
           </Button>
         </DialogTrigger>
 
-        <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-0 shadow-2xl rounded-3xl">
-          {/* Header */}
-          <div className="relative bg-gradient-to-br from-[#00DC33] via-[#00C32D] to-[#00AA27] px-8 py-10">
+        <DialogContent className="sm:max-w-[550px] p-0 rounded-3xl">
+          <div className="bg-[#00DC33] px-8 py-8 text-white">
             <DialogHeader>
-              <DialogTitle className="text-4xl font-bold text-white mb-3">
-                Edit Your Profile
+              <DialogTitle className="text-3xl font-bold">
+                Edit Profile
               </DialogTitle>
               <DialogDescription className="text-white/90">
-                Update your personal information and security settings
+                Update your personal info
               </DialogDescription>
             </DialogHeader>
           </div>
 
-          {/* FORM */}
-          <form onSubmit={handleSubmit} className="px-8 py-8 bg-white">
-            <div className="space-y-6">
-              {/* Full Name */}
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2 text-sm font-semibold">
-                  <User className="h-4 w-4 text-[#00DC33]" />
-                  Full Name
-                </Label>
-                <Input
-                  name="fullName"
-                  placeholder="Enter your full name"
-                  className="h-12 rounded-xl border-2"
-                />
-              </div>
-
-              {/* Profile Picture */}
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2 text-sm font-semibold">
-                  <Camera className="h-4 w-4 text-[#00DC33]" />
-                  Profile Picture
-                </Label>
-                <Input
-                  name="file"
-                  type="file"
-                  accept="image/*"
-                  className="h-12 rounded-xl border-2 file:bg-[#00DC33]/10 file:text-[#00DC33]"
-                />
-              </div>
-
-              {/* Divider */}
-              <div className="border-t pt-4 text-center text-sm font-semibold text-slate-500">
-                🔐 Security Settings
-              </div>
-
-              {/* Old Password */}
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2 text-sm font-semibold">
-                  <Lock className="h-4 w-4 text-[#00DC33]" />
-                  Current Password
-                </Label>
-                <Input
-                  name="oldPassword"
-                  type="password"
-                  className="h-12 rounded-xl border-2"
-                />
-              </div>
-
-              {/* New Password */}
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2 text-sm font-semibold">
-                  <Lock className="h-4 w-4 text-[#00DC33]" />
-                  New Password
-                </Label>
-                <Input
-                  name="newPassword"
-                  type="password"
-                  className="h-12 rounded-xl border-2"
-                />
-              </div>
+          <form onSubmit={handleSubmit} className="px-8 py-8 space-y-6">
+            {/* Full Name */}
+            <div>
+              <Label className="flex items-center gap-2">
+                <User size={16} /> Full Name
+              </Label>
+              <Input name="fullName" placeholder="Enter your full name" />
             </div>
 
-            <DialogFooter className="mt-8 gap-3 flex-col sm:flex-row">
+            {/* Image */}
+            <div>
+              <Label className="flex items-center gap-2">
+                <Camera size={16} /> Profile Picture
+              </Label>
+              <Input name="file" type="file" accept="image/*" />
+            </div>
+
+            {/* Password */}
+            <div className="pt-4 border-t text-sm text-gray-500 text-center">
+              🔐 Security
+            </div>
+
+            <Input name="oldPassword" type="password" placeholder="Old password" />
+            <Input name="newPassword" type="password" placeholder="New password" />
+
+            <DialogFooter className="gap-3">
               <DialogClose asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="h-12 px-8 rounded-xl w-full sm:w-auto"
-                >
+                <Button type="button" variant="outline">
                   Cancel
                 </Button>
               </DialogClose>
 
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="h-12 px-10 rounded-xl bg-[#00DC33] hover:bg-[#00C32D] text-white w-full sm:w-auto"
-              >
-                {isLoading ? 'Saving...' : 'Save Changes'}
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? "Saving..." : "Save Changes"}
               </Button>
             </DialogFooter>
           </form>

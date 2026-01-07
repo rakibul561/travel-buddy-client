@@ -30,17 +30,16 @@ export default function SubscriptionCard({
 }: Props) {
   const [createSubscription, { isLoading }] = useCreateSubscriptionMutation();
 
-  console.log(createSubscription , "the data is")
+  console.log(  "the data is", createSubscription)
 
   const handleSubscribe = async () => {
     console.log("payment button hit .......", plan);
 
     try {
       const res = await createSubscription({ plan }).unwrap();
+      console.log("the final plane is", plan)
 
-      if (res?.url) {
-        window.location.href = res.url;
-      }
+      console.log("the response is ", res)
     } catch (error) {
       console.error("Subscription failed", error);
     }

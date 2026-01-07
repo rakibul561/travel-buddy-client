@@ -87,9 +87,8 @@ export const travelApi = baseApi.injectEndpoints({
       query: (body) => ({
         url: "/payment/subscription",
         method: "POST",
-        body: body,
+        data: body,
       }),
-      invalidatesTags: ["TRAVEL"],
     }),
 
     getAllpayment: builder.query({
