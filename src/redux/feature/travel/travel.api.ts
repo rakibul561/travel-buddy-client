@@ -47,7 +47,7 @@ export const travelApi = baseApi.injectEndpoints({
       query: ({ travelPlanId }) => ({
         url: "/join-requests",
         method: "POST",
-        body: { travelPlanId },
+        data: { travelPlanId },
       }),
       invalidatesTags: ["TRAVEL"],
     }),

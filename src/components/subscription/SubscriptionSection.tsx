@@ -1,6 +1,13 @@
+"use client";
+
 import SubscriptionCard from "./PricingCard";
+import { useUserInfoQuery } from "../../redux/feature/auth/auth.api";
 
 export default function SubscriptionSection() {
+  const { data: userData } = useUserInfoQuery(undefined);
+  const user = userData?.data;
+  const currentPlan = user?.subscriptionPlan || "FREE"; // Assuming 'subscriptionPlan' holds the value
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
@@ -12,6 +19,7 @@ export default function SubscriptionSection() {
           duration="/lifetime"
           description="Get started and explore travelers for free"
           plan="FREE"
+          currentPlan={currentPlan}
           features={[
             { label: "Create travel profile", available: true },
             { label: "View public travel plans", available: true },
@@ -30,6 +38,7 @@ export default function SubscriptionSection() {
           description="Best for short trips and casual travelers"
           plan="MONTHLY"
           popular
+          currentPlan={currentPlan}
           features={[
             { label: "Unlimited matches", available: true },
             { label: "Send join requests", available: true },
@@ -46,6 +55,7 @@ export default function SubscriptionSection() {
           duration="/year"
           description="Perfect for frequent travelers"
           plan="YEARLY"
+          currentPlan={currentPlan}
           features={[
             { label: "Unlimited matches", available: true },
             { label: "Send join requests", available: true },

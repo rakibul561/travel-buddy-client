@@ -20,7 +20,7 @@ export default function NavbarClient() {
   const pathName = usePathname();
   const [logout] = useLogOutMutation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading, refetch } = useUserInfoQuery(undefined, {
     refetchOnMountOrArgChange: true,
@@ -75,31 +75,31 @@ export default function NavbarClient() {
     role === "ADMIN"
       ? adminLinks
       : role === "USER"
-      ? userLinks
-      : loggedOutLinks;
+        ? userLinks
+        : loggedOutLinks;
 
   // Dropdown menu links with icons
   const dropdownLinks = user
     ? [
-        {
-          name: "Dashboard",
-          href: role === "ADMIN" ? "/admin/dashboard" : "/user/dashboard",
-          icon: LayoutDashboard,
-        },
-        { name: "My Profile", href: "/profile", icon: UserCircle },
-        ...(role === "USER"
-          ? [{ name: "My Travel Plans", href: "/travel-plans", icon: MapPin }]
-          : []),
-        ...(role === "ADMIN"
-          ? [
-              {
-                name: "Manage Users",
-                href: "/admin/dashboard/allUser",
-                icon: Shield,
-              },
-            ]
-          : []),
-      ]
+      {
+        name: "Dashboard",
+        href: role === "ADMIN" ? "/admin/dashboard" : "/user/dashboard",
+        icon: LayoutDashboard,
+      },
+      { name: "My Profile", href: "/profile", icon: UserCircle },
+      ...(role === "USER"
+        ? [{ name: "My Travel Plans", href: "/travel-plans", icon: MapPin }]
+        : []),
+      ...(role === "ADMIN"
+        ? [
+          {
+            name: "Manage Users",
+            href: "/admin/dashboard/allUser",
+            icon: Shield,
+          },
+        ]
+        : []),
+    ]
     : [];
 
   // =====================
@@ -120,11 +120,11 @@ export default function NavbarClient() {
 
   return (
     <nav className="fixed top-4 left-0 right-0 z-50 px-4">
-      <div className="mx-auto max-w-7xl rounded-full bg-white/70 backdrop-blur-lg shadow-md px-8 py-3 flex items-center justify-between border">
+      <div className="mx-auto max-w-7xl glass rounded-full shadow-lg px-8 py-3 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Logo />
-          <span className="text-3xl font-bold text-[#00DC33]">Travel</span>
+          <span className="text-3xl font-bold text-primary font-display">Travel</span>
         </Link>
 
         {/* Nav Links - Desktop */}
@@ -133,9 +133,9 @@ export default function NavbarClient() {
             <Link
               key={link.name}
               href={link.href}
-              className="relative text-gray-600 font-medium transition hover:text-[#00DC33]
+              className="relative text-muted-foreground font-medium transition hover:text-primary
               after:absolute after:-bottom-1 after:left-0 after:h-[2px]
-              after:w-0 after:bg-[#00DC33] after:transition-all hover:after:w-full"
+              after:w-0 after:bg-primary after:transition-all hover:after:w-full"
             >
               {link.name}
             </Link>
@@ -150,27 +150,27 @@ export default function NavbarClient() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center space-x-2 p-2 rounded-full border-2 border-gray-300 hover:border-[#00DC33] transition-all hover:shadow-md"
+                  className="flex items-center space-x-2 p-2 rounded-full border-2 border-border hover:border-primary transition-all hover:shadow-md"
                 >
-                  <Menu className="w-5 h-5 text-gray-600" />
+                  <Menu className="w-5 h-5 text-muted-foreground" />
                   {user?.profilePicture ? (
                     <img
                       src={user.profilePicture}
                       alt={user.name}
-                      className="w-8 h-8 rounded-full object-cover border-2 border-white"
+                      className="w-8 h-8 rounded-full object-cover border-2 border-card"
                     />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00DC33] to-green-600 flex items-center justify-center">
-                      <User className="w-5 h-5 text-white" />
+                    <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center">
+                      <User className="w-5 h-5 text-primary-foreground" />
                     </div>
                   )}
                 </button>
 
                 {/* Dropdown Menu - Updated Design */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="absolute right-0 mt-3 w-72 card rounded-2xl shadow-xl overflow-hidden z-50 animate-slide-in-from-top">
                     {/* User Info Header with Gradient */}
-                    <div className="bg-gradient-to-br from-[#00DC33] to-green-600 px-6 py-4 text-white">
+                    <div className="gradient-primary px-6 py-4 text-primary-foreground">
                       <div className="flex items-center gap-3 mb-2">
                         {user?.profilePicture ? (
                           <img
@@ -206,9 +206,9 @@ export default function NavbarClient() {
                             key={link.name}
                             href={link.href}
                             onClick={() => setIsDropdownOpen(false)}
-                            className="flex items-center gap-3 px-6 py-3 text-sm font-medium text-gray-700 hover:bg-green-50 hover:text-[#00DC33] transition-all group"
+                            className="flex items-center gap-3 px-6 py-3 text-sm font-medium text-card-foreground hover:bg-primary/10 hover:text-primary transition-all group"
                           >
-                            <Icon className="w-5 h-5 text-gray-400 group-hover:text-[#00DC33] transition-colors" />
+                            <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
                             <span>{link.name}</span>
                           </Link>
                         );
@@ -216,7 +216,7 @@ export default function NavbarClient() {
                     </div>
 
                     {/* Logout Button */}
-                    <div className="border-t border-gray-100 p-2">
+                    <div className="border-t border-border p-2">
                       <button
                         onClick={handleLogout}
                         className="flex items-center gap-3 w-full px-6 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-xl transition-all group"
@@ -237,7 +237,7 @@ export default function NavbarClient() {
 
               <Button
                 asChild
-                className="rounded-full px-6 bg-[#00DC33] hover:bg-green-600 text-white"
+                className="btn-primary"
               >
                 <Link href="/register">Register</Link>
               </Button>

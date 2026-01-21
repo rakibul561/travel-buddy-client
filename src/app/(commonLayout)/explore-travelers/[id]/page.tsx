@@ -15,20 +15,17 @@ import { useState } from "react";
 import {
   useGetSingleTravelsQuery,
   useSendJoinRequestMutation,
-} from "../../../../redux/feature/travel/travel.api";
+} from "@/redux/feature/travel/travel.api";
 
 export default function TravelDetailsPage() {
   const params = useParams();
 
-  const travelPlanId =
-    typeof params?.id === "string" ? params.id : undefined;
-
+  const travelPlanId = typeof params?.id === "string" ? params.id : undefined;
 
   const [requestSent, setRequestSent] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [toastType, setToastType] =
-    useState<"success" | "error">("success");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
 
   // 🔹 Get single travel plan
   const { data, isLoading, isError } = useGetSingleTravelsQuery(
@@ -39,9 +36,9 @@ export default function TravelDetailsPage() {
   // 🔹 Send join request mutation
   const [sendJoinRequest, { isLoading: isSubmitting }] = useSendJoinRequestMutation();
 
-   if(!travelPlanId){
-    throw new Error("travelPlaneId is not found")
-   }
+  // Removed throw Error to avoid crushing the app, handled via isError UI below
+  // if(!travelPlanId){ throw new Error("travelPlaneId is not found") }
+
   // 🔹 Toast helper
   const showNotification = (
     message: string,
@@ -56,7 +53,7 @@ export default function TravelDetailsPage() {
   // 🔹 Button click handler (MAIN LOGIC)
   const handleJoinRequest = async () => {
     if (!travelPlanId || requestSent) return;
-    console.log("button click for travelPlaneId", travelPlanId)
+    console.log("button click for travelPlaneId", travelPlanId);
 
     try {
       await sendJoinRequest({ travelPlanId }).unwrap();
@@ -66,6 +63,7 @@ export default function TravelDetailsPage() {
         "success"
       );
     } catch (error: any) {
+      console.error(error);
       showNotification(
         error?.data?.message || "Failed to send join request",
         "error"
@@ -103,9 +101,8 @@ export default function TravelDetailsPage() {
       {/* 🔔 Toast */}
       {showToast && (
         <div
-          className={`fixed top-6 right-6 z-50 flex items-center gap-3 px-6 py-4 rounded-xl shadow-lg text-white ${
-            toastType === "success" ? "bg-green-500" : "bg-red-500"
-          }`}
+          className={`fixed top-6 right-6 z-50 flex items-center gap-3 px-6 py-4 rounded-xl shadow-lg text-white ${toastType === "success" ? "bg-green-500" : "bg-red-500"
+            }`}
         >
           {toastType === "success" ? (
             <CheckCircle2 className="h-5 w-5" />
@@ -120,7 +117,7 @@ export default function TravelDetailsPage() {
         {/* Hero */}
         <div className="relative rounded-3xl overflow-hidden shadow-lg mb-10">
           <img
-            src={plan.image}
+            src={plan.image || "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2021&q=80"}
             alt={plan.destination}
             className="w-full h-[420px] object-cover"
           />
@@ -181,13 +178,12 @@ export default function TravelDetailsPage() {
               <button
                 onClick={handleJoinRequest}
                 disabled={isSubmitting || requestSent}
-                className={`w-full py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition ${
-                  requestSent
+                className={`w-full py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition ${requestSent
                     ? "bg-green-500 text-white"
                     : isSubmitting
-                    ? "bg-gray-300 text-gray-500"
-                    : "bg-[#00DC33] text-white hover:bg-[#00C02B]"
-                }`}
+                      ? "bg-gray-300 text-gray-500"
+                      : "bg-[#00DC33] text-white hover:bg-[#00C02B]"
+                  }`}
               >
                 {isSubmitting ? (
                   <>
@@ -234,9 +230,8 @@ function InfoCard({
 }) {
   return (
     <div
-      className={`bg-white p-5 rounded-xl shadow flex gap-4 ${
-        full ? "md:col-span-2" : ""
-      }`}
+      className={`bg-white p-5 rounded-xl shadow flex gap-4 ${full ? "md:col-span-2" : ""
+        }`}
     >
       <div className="text-[#00DC33]">{icon}</div>
       <div>

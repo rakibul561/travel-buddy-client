@@ -1,15 +1,10 @@
 "use client";
 
+import { useCreateTravelMutation } from "@/redux/feature/travel/travel.api";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -17,385 +12,182 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Calendar,
-  DollarSign,
-  FileText,
-  Image as ImageIcon,
-  MapPin,
-  Users,
-  X
-} from "lucide-react";
+import { Calendar, Image as ImageIcon, MapPin, DollarSign, Plane } from "lucide-react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
-import { toast } from "react-hot-toast";
-import { useCreateTravelMutation } from "../../../../../redux/feature/travel/travel.api";
 
 export default function CreateTravelPage() {
-
-
-
-
+  const [createTravel, { isLoading }] = useCreateTravelMutation();
   const router = useRouter();
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const [createTravel] = useCreateTravelMutation();
-
-  const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
-  const [formData, setFormData] = useState({
-    destination: "",
-    country: "",
-    city: "",
-    startDate: "",
-    endDate: "",
-    budgetMin: "",
-    budgetMax: "",
-    travelType: "",
-    description: "",
-  });
-
-  // ---------------- handlers ----------------
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSelectChange = (value: string) => {
-    setFormData({
-      ...formData,
-      travelType: value,
-    });
-  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    setSelectedFile(file);
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewImage(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const removeImage = () => {
-    setPreviewImage(null);
-    setSelectedFile(null);
-    if (formRef.current) {
-      const fileInput = formRef.current.querySelector(
-        'input[type="file"]'
-      ) as HTMLInputElement;
-      if (fileInput) fileInput.value = "";
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  // ---------------- submit ----------------
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
 
-    console.log("FORM STATE:", formData);
-    console.log("FILE:", selectedFile);
+    const travelData = {
+      destination: formData.get("destination"),
+      startDate: formData.get("startDate"),
+      endDate: formData.get("endDate"),
+      budget: Number(formData.get("budget")),
+      travelType: formData.get("travelType"),
+      description: formData.get("description"),
+    };
 
-    if (!selectedFile) {
-      toast.error("Please select an image");
-      return;
-    }
-
-    if (!formData.travelType) {
-      toast.error("Select travel type");
-      return;
-    }
+    const submitData = new FormData();
+    const file = formData.get("file");
+    if (file) submitData.append("file", file);
+    submitData.append("data", JSON.stringify(travelData));
 
     try {
-      setLoading(true);
-
-      const formDataToSend = new FormData();
-
-      formDataToSend.append("file", selectedFile);
-      formDataToSend.append(
-        "data",
-        JSON.stringify({
-          destination: formData.destination,
-          country: formData.country,
-          city: formData.city,
-          startDate: formData.startDate,
-          endDate: formData.endDate,
-          budgetMin: Number(formData.budgetMin),
-          budgetMax: Number(formData.budgetMax),
-          travelType: formData.travelType,
-          description: formData.description,
-        })
-      );
-
-      // 🔍 debug FormData
-      for (const pair of formDataToSend.entries()) {
-        console.log(pair[0], pair[1]);
-      }
-
-      const res = await createTravel(formDataToSend).unwrap();
-      console.log("API RESPONSE:", res);
-
-      toast.success("Travel plan created successfully 🚀");
-      router.push("/travel-plans");
-    } catch (error) {
-      console.error("CREATE TRAVEL ERROR:", error);
-      toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
+      await createTravel(submitData).unwrap();
+      toast.success("Travel plan created successfully! ✈️");
+      router.push("/user/dashboard/my-travels");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.data?.message || "Failed to create travel plan");
     }
   };
 
-  // ---------------- UI ----------------
   return (
-    <div className="min-h-screen bg-gradient-to-br  py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header Section */}
-        <div className="text-center mb-12">
-          <div className="inline-block mb-4">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg animate-pulse">
-              ✈️ Travel Planner
+    <div className="max-w-4xl mx-auto p-6 space-y-8">
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold font-display text-primary">Plan Your Next Adventure</h1>
+        <p className="text-muted-foreground">Share your travel plans and find the perfect buddy</p>
+      </div>
+
+      <div className="glass p-8 rounded-3xl border border-white/20 shadow-xl relative overflow-hidden">
+        {/* Decorative background blobs */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none" />
+
+        <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {/* Destination */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 font-medium">
+                <MapPin size={16} className="text-primary" /> Destination
+              </Label>
+              <Input
+                name="destination"
+                placeholder="e.g. Paris, France"
+                required
+                className="h-12 rounded-xl bg-white/50 border-gray-200 focus:border-primary focus:ring-primary/20"
+              />
+            </div>
+
+            {/* Travel Type */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 font-medium">
+                <Plane size={16} className="text-primary" /> Travel Type
+              </Label>
+              <Select name="travelType" required>
+                <SelectTrigger className="h-12 rounded-xl bg-white/50 border-gray-200">
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Adventure">Adventure</SelectItem>
+                  <SelectItem value="Leisure">Leisure</SelectItem>
+                  <SelectItem value="Business">Business</SelectItem>
+                  <SelectItem value="Backpacking">Backpacking</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Dates */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 font-medium">
+                <Calendar size={16} className="text-primary" /> Start Date
+              </Label>
+              <Input
+                name="startDate"
+                type="date"
+                required
+                className="h-12 rounded-xl bg-white/50 border-gray-200"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 font-medium">
+                <Calendar size={16} className="text-primary" /> End Date
+              </Label>
+              <Input
+                name="endDate"
+                type="date"
+                required
+                className="h-12 rounded-xl bg-white/50 border-gray-200"
+              />
+            </div>
+
+            {/* Budget */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 font-medium">
+                <DollarSign size={16} className="text-primary" /> Budget ($)
+              </Label>
+              <Input
+                name="budget"
+                type="number"
+                placeholder="e.g. 1500"
+                required
+                className="h-12 rounded-xl bg-white/50 border-gray-200"
+              />
+            </div>
+
+            {/* Image Upload */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 font-medium">
+                <ImageIcon size={16} className="text-primary" /> Cover Image
+              </Label>
+              <Input
+                name="file"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="h-12 rounded-xl bg-white/50 border-gray-200 file:bg-primary/10 file:text-primary file:border-0 file:rounded-lg file:mr-4 file:px-4 file:py-2 hover:file:bg-primary/20"
+              />
             </div>
           </div>
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
-            Create Your Journey
-          </h1>
-          <p className="text-xl text-gray-600">
-            Plan your next adventure with us
-          </p>
-        </div>
 
-        <Card className="shadow-2xl border-0 backdrop-blur-sm bg-white/80 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-8">
-            <CardTitle className="text-3xl flex items-center gap-3">
-              <MapPin className="w-8 h-8" />
-              Travel Plan Details
-            </CardTitle>
-            <CardDescription className="text-blue-50 text-base mt-2">
-              Fill in the information below to create your travel plan
-            </CardDescription>
-          </CardHeader>
+          {/* Description */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 font-medium">Description</Label>
+            <Textarea
+              name="description"
+              placeholder="Tell others about your trip plan..."
+              required
+              className="min-h-[120px] rounded-xl bg-white/50 border-gray-200 focus:border-primary focus:ring-primary/20"
+            />
+          </div>
 
-          <CardContent className="p-8">
-            <form
-              ref={formRef}
-              onSubmit={handleSubmit}
-              className="space-y-8"
-            >
-              {/* Destination Section */}
-              <div className="space-y-4 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-100 hover:border-blue-300 transition-all">
-                <div className="flex items-center gap-2 text-xl font-bold text-gray-800 mb-4">
-                  <MapPin className="w-6 h-6 text-blue-600" />
-                  <span>Destination</span>
-                </div>
+          {/* Image Preview */}
+          {previewImage && (
+            <div className="relative h-48 w-full rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
+              <img src={previewImage} alt="Preview" className="w-full h-full object-cover" />
+            </div>
+          )}
 
-                <div className="space-y-4">
-                  <div>
-                    <Label className="text-sm font-semibold text-gray-700">Destination Name</Label>
-                    <Input
-                      name="destination"
-                      value={formData.destination}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-2 border-2 border-blue-200 focus:border-blue-500 transition-colors"
-                      placeholder="e.g., Eiffel Tower"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input
-                      name="country"
-                      placeholder="Country"
-                      value={formData.country}
-                      onChange={handleInputChange}
-                      className="border-2 border-blue-200 focus:border-blue-500 transition-colors"
-                    />
-                    <Input
-                      name="city"
-                      placeholder="City"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      className="border-2 border-blue-200 focus:border-blue-500 transition-colors"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Dates Section */}
-              <div className="space-y-4 p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border-2 border-purple-100 hover:border-purple-300 transition-all">
-                <div className="flex items-center gap-2 text-xl font-bold text-gray-800 mb-4">
-                  <Calendar className="w-6 h-6 text-purple-600" />
-                  <span>Travel Dates</span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm font-semibold text-gray-700">Start Date</Label>
-                    <Input
-                      type="date"
-                      name="startDate"
-                      value={formData.startDate}
-                      onChange={handleInputChange}
-                      className="mt-2 border-2 border-purple-200 focus:border-purple-500 transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-sm font-semibold text-gray-700">End Date</Label>
-                    <Input
-                      type="date"
-                      name="endDate"
-                      value={formData.endDate}
-                      onChange={handleInputChange}
-                      className="mt-2 border-2 border-purple-200 focus:border-purple-500 transition-colors"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Budget Section */}
-              <div className="space-y-4 p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-100 hover:border-green-300 transition-all">
-                <div className="flex items-center gap-2 text-xl font-bold text-gray-800 mb-4">
-                  <DollarSign className="w-6 h-6 text-green-600" />
-                  <span>Budget Range</span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm font-semibold text-gray-700">Minimum Budget</Label>
-                    <Input
-                      type="number"
-                      name="budgetMin"
-                      placeholder="Min Budget"
-                      value={formData.budgetMin}
-                      onChange={handleInputChange}
-                      className="mt-2 border-2 border-green-200 focus:border-green-500 transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-sm font-semibold text-gray-700">Maximum Budget</Label>
-                    <Input
-                      type="number"
-                      name="budgetMax"
-                      placeholder="Max Budget"
-                      value={formData.budgetMax}
-                      onChange={handleInputChange}
-                      className="mt-2 border-2 border-green-200 focus:border-green-500 transition-colors"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Travel Type Section */}
-              <div className="space-y-4 p-6 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border-2 border-orange-100 hover:border-orange-300 transition-all">
-                <div className="flex items-center gap-2 text-xl font-bold text-gray-800 mb-4">
-                  <Users className="w-6 h-6 text-orange-600" />
-                  <span>Travel Type</span>
-                </div>
-
-                <Select
-                  value={formData.travelType}
-                  onValueChange={handleSelectChange}
-                >
-                  <SelectTrigger className="border-2 border-orange-200 focus:border-orange-500 transition-colors">
-                    <SelectValue placeholder="Select travel type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="SOLO">🧳 Solo</SelectItem>
-                    <SelectItem value="FRIENDS">👥 Friends</SelectItem>
-                    <SelectItem value="FAMILY">👨‍👩‍👧‍👦 Family</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Description Section */}
-              <div className="space-y-4 p-6 bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl border-2 border-pink-100 hover:border-pink-300 transition-all">
-                <div className="flex items-center gap-2 text-xl font-bold text-gray-800 mb-4">
-                  <FileText className="w-6 h-6 text-pink-600" />
-                  <span>Description</span>
-                </div>
-
-                <Textarea
-                  name="description"
-                  placeholder="Describe your travel plans..."
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  className="border-2 border-pink-200 focus:border-pink-500 transition-colors min-h-[120px]"
-                />
-              </div>
-
-              {/* Image Upload Section */}
-              <div className="space-y-4 p-6 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl border-2 border-indigo-100 hover:border-indigo-300 transition-all">
-                <div className="flex items-center gap-2 text-xl font-bold text-gray-800 mb-4">
-                  <ImageIcon className="w-6 h-6 text-indigo-600" />
-                  <span>Travel Image</span>
-                </div>
-
-                <div className="space-y-4">
-                  <Label
-                    htmlFor="file-upload"
-                    className="flex items-center justify-center w-full h-32 px-4 transition bg-white border-2 border-indigo-300 border-dashed rounded-xl appearance-none cursor-pointer hover:border-indigo-400 focus:outline-none"
-                  >
-                    <span className="flex items-center space-x-2">
-                      <ImageIcon className="w-6 h-6 text-indigo-600" />
-                      <span className="font-medium text-indigo-600">
-                        Click to upload image
-                      </span>
-                    </span>
-                    <Input
-                      id="file-upload"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-                  </Label>
-
-                  {previewImage && (
-                    <div className="relative group">
-                      <img
-                        src={previewImage}
-                        alt="preview"
-                        className="w-full h-64 object-cover rounded-xl shadow-lg"
-                      />
-                      <button
-                        type="button"
-                        onClick={removeImage}
-                        className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white p-3 rounded-full shadow-lg transform transition-transform hover:scale-110"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full h-14 text-lg font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 transform hover:scale-[1.02] transition-all shadow-lg hover:shadow-xl"
-              >
-                {loading ? (
-                  <span className="flex items-center gap-2">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Creating...
-                  </span>
-                ) : (
-                  "🚀 Create Travel Plan"
-                )}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="w-full h-12 text-lg font-bold btn-primary shadow-lg shadow-primary/20 rounded-xl"
+          >
+            {isLoading ? "Creating Plan..." : "Create Travel Plan"}
+          </Button>
+        </form>
       </div>
     </div>
   );

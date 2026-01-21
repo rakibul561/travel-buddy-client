@@ -4,6 +4,8 @@
 import { Check, Loader2, X } from "lucide-react";
 import { useCreateSubscriptionMutation } from "../../redux/feature/travel/travel.api";
 
+import toast from "react-hot-toast";
+
 interface Feature {
   label: string;
   available: boolean;
@@ -17,6 +19,7 @@ interface Props {
   popular?: boolean;
   plan: "MONTHLY" | "YEARLY" | "FREE";
   features: Feature[];
+  currentPlan?: string;
 }
 
 export default function SubscriptionCard({
@@ -27,38 +30,44 @@ export default function SubscriptionCard({
   popular,
   plan,
   features,
+  currentPlan,
 }: Props) {
   const [createSubscription, { isLoading }] = useCreateSubscriptionMutation();
 
-  console.log(  "the data is", createSubscription)
-
   const handleSubscribe = async () => {
-    console.log("payment button hit .......", plan);
-
     try {
       const res = await createSubscription({ plan }).unwrap();
-      console.log("the final plane is", plan)
 
-      console.log("the response is ", res)
+      // Handle redirection based on response structure
+      if (res.url) {
+        window.location.href = res.url;
+      } else if (res.data?.paymentUrl) {
+        window.location.href = res.data.paymentUrl;
+      } else {
+        toast.success("Subscription successful!");
+      }
+
     } catch (error) {
       console.error("Subscription failed", error);
+      toast.error("Failed to initiate payment");
     }
   };
 
+  const isCurrentPlan = currentPlan === plan;
+
   return (
     <div
-      className={`divide-y rounded-2xl border shadow-sm ${
-        popular ? "border-indigo-600 scale-105" : "border-gray-200"
-      }`}
+      className={`divide-y rounded-2xl border shadow-sm transition-all duration-300 ${popular ? "border-primary shadow-lg scale-105 bg-white z-10" : "border-gray-200 bg-white hover:border-primary/50"
+        }`}
     >
       {/* Header */}
       <div className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+        <h2 className="text-xl font-bold text-gray-900 font-display">{title}</h2>
 
         <p className="mt-2 text-sm text-gray-600">{description}</p>
 
-        <p className="mt-4">
-          <strong className="text-3xl font-bold text-gray-900">
+        <p className="mt-4 flex items-baseline gap-1">
+          <strong className="text-4xl font-bold text-gray-900">
             {price}
           </strong>
           <span className="text-sm text-gray-600">{duration}</span>
@@ -66,15 +75,20 @@ export default function SubscriptionCard({
 
         <button
           onClick={handleSubscribe}
-          disabled={isLoading || plan === "FREE"}
-          className="mt-6 w-full rounded-md bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 transition disabled:opacity-60"
+          disabled={isLoading || isCurrentPlan}
+          className={`mt-6 w-full rounded-xl px-4 py-3 text-sm font-bold text-white transition-all shadow-lg active:scale-95 disabled:opacity-60 disabled:pointer-events-none ${isCurrentPlan
+              ? "bg-gray-400 cursor-not-allowed"
+              : popular
+                ? "bg-primary hover:bg-primary/90 shadow-primary/25"
+                : "bg-gray-900 hover:bg-gray-800"
+            }`}
         >
           {isLoading ? (
             <span className="flex items-center justify-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
               Redirecting...
             </span>
-          ) : plan === "FREE" ? (
+          ) : isCurrentPlan ? (
             "Current Plan"
           ) : (
             "Get Started"
@@ -83,20 +97,24 @@ export default function SubscriptionCard({
       </div>
 
       {/* Features */}
-      <div className="p-6">
-        <p className="text-sm font-medium text-gray-900">
+      <div className="p-6 bg-gray-50/50 rounded-b-2xl">
+        <p className="text-sm font-bold text-gray-900 uppercase tracking-wide">
           What's included:
         </p>
 
-        <ul className="mt-4 space-y-2">
+        <ul className="mt-4 space-y-3">
           {features.map((feature, index) => (
-            <li key={index} className="flex items-center gap-2 text-sm">
+            <li key={index} className="flex items-center gap-3 text-sm">
               {feature.available ? (
-                <Check className="h-5 w-5 text-indigo-600" />
+                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Check className="h-3 w-3 text-primary" strokeWidth={3} />
+                </div>
               ) : (
-                <X className="h-5 w-5 text-red-600" />
+                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
+                  <X className="h-3 w-3 text-gray-400" />
+                </div>
               )}
-              <span className="text-gray-700">{feature.label}</span>
+              <span className="text-gray-700 font-medium">{feature.label}</span>
             </li>
           ))}
         </ul>

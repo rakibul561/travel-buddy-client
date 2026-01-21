@@ -5,43 +5,43 @@ import Logo from "../../assets/Logo";
 
 const Footer = () => {
 
-   const pathName = usePathname();
+  const pathName = usePathname();
 
-   if(pathName.includes("/dashboard")){
+  if (pathName.includes("/dashboard")) {
     return <div></div>
-   }
+  }
 
 
 
 
   return (
     <div>
-      <footer className="bg-white pt-20 pb-10 px-4 md:px-8 rounded-t-[3rem]">
+      <footer className="bg-card pt-20 pb-10 px-4 md:px-8 rounded-t-[3rem] border-t">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 space-y-4 md:col-span-1">
-                <span className="py-4"><Logo ></Logo></span>
-               <span className="text-4xl font-bold text-[#00DC33]">Travel</span>
-              <p className="text-gray-500 font-medium">
+              <span className="py-4"><Logo ></Logo></span>
+              <span className="text-4xl font-bold text-primary font-display">Travel</span>
+              <p className="text-muted-foreground font-medium">
                 Making the world feel a little smaller and a lot friendlier.
               </p>
             </div>
 
             <div>
-              <h4 className="font-bold text-gray-800 mb-6">Company</h4>
-              <ul className="space-y-4 text-gray-500 font-medium">
+              <h4 className="font-bold text-foreground mb-6">Company</h4>
+              <ul className="space-y-4 text-muted-foreground font-medium">
                 <li>
-                  <a href="#" className="hover:text-coral transition-colors">
+                  <a href="#" className="hover:text-accent transition-colors">
                     About Us
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-coral transition-colors">
+                  <a href="#" className="hover:text-accent transition-colors">
                     Careers
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-coral transition-colors">
+                  <a href="#" className="hover:text-accent transition-colors">
                     Blog
                   </a>
                 </li>
@@ -49,20 +49,20 @@ const Footer = () => {
             </div>
 
             <div>
-              <h4 className="font-bold text-gray-800 mb-6">Support</h4>
-              <ul className="space-y-4 text-gray-500 font-medium">
+              <h4 className="font-bold text-foreground mb-6">Support</h4>
+              <ul className="space-y-4 text-muted-foreground font-medium">
                 <li>
-                  <a href="#" className="hover:text-coral transition-colors">
+                  <a href="#" className="hover:text-accent transition-colors">
                     Help Center
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-coral transition-colors">
+                  <a href="#" className="hover:text-accent transition-colors">
                     Safety
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-coral transition-colors">
+                  <a href="#" className="hover:text-accent transition-colors">
                     Community Guidelines
                   </a>
                 </li>
@@ -70,21 +70,21 @@ const Footer = () => {
             </div>
 
             <div>
-              <h4 className="font-bold text-gray-800 mb-6">Newsletter</h4>
+              <h4 className="font-bold text-foreground mb-6">Newsletter</h4>
               <div className="flex gap-2">
                 <input
                   type="email"
                   placeholder="Your email"
-                  className="bg-gray-50 px-4 py-3 rounded-xl w-full font-medium focus:outline-none focus:ring-2 focus:ring-sunny"
+                  className="input flex-1"
                 />
-                <button className="bg-[#00DC33] text-yellow-900 font-bold px-4 py-3 rounded-xl hover:bg-yellow-400 transition-colors">
+                <button className="bg-primary text-primary-foreground font-bold px-4 py-3 rounded-xl hover:bg-primary/90 transition-colors">
                   Go
                 </button>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-gray-100 pt-10 text-center text-gray-400 font-medium text-sm">
+          <div className="border-t border-border pt-10 text-center text-muted-foreground font-medium text-sm">
             © 2024 HelloTravel Inc. Made with ❤️ for travelers everywhere.
           </div>
         </div>

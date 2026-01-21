@@ -6,47 +6,46 @@ import SubscriptionSection from '../../components/subscription/SubscriptionSecti
 
 export function HomePage() {
   return (
-    <div className="min-h-screen bg-cream font-sans overflow-x-hidden">
-
+    <div className="min-h-screen bg-background font-sans overflow-x-hidden">
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 md:px-8 overflow-hidden">
-        {/* Decorative Blobs */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sunny/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-coral/10 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4" />
+        {/* Decorative Blobs with new theme colors */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 animate-pulse-slow" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/10 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 animate-pulse-slow" />
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <Sparkles className="w-4 h-4 text-sunny fill-sunny" />
-            <span className="text-sm font-bold text-gray-600">
+          <div className="inline-flex items-center gap-2 glass px-4 py-2 rounded-full shadow-sm mb-8 animate-slide-in-from-bottom">
+            <Sparkles className="w-4 h-4 text-secondary fill-secondary" />
+            <span className="text-sm font-bold text-muted-foreground">
               Join 50,000+ happy travelers
             </span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold text-gray-800 mb-6 leading-tight tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-foreground mb-6 leading-tight tracking-tight font-display">
             Find your next adventure <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-coral to-sunny">
+            <span className="text-gradient">
               with friends!
             </span>{' '}
             🌍
           </h1>
 
-          <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto font-medium">
+          <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto font-medium">
             Discover beautiful places and meet fellow travelers who love
             exploring just as much as you do. Your journey starts with hello.
           </p>
 
-          {/* Search Bar */}
-          <div className="bg-white p-2 rounded-full shadow-warm max-w-2xl mx-auto flex items-center gap-2 border-4 border-white/50">
-            <div className="flex-1 flex items-center px-6 h-14 bg-gray-50 rounded-full hover:bg-white transition-colors group focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-blue/20">
-              <Search className="w-5 h-5 text-gray-400 group-focus-within:text-sky-blue transition-colors" />
+          {/* Search Bar with new theme */}
+          <div className="glass p-2 rounded-full shadow-lg max-w-2xl mx-auto flex items-center gap-2 border-2 border-primary/10 hover:border-primary/30 transition-all">
+            <div className="flex-1 flex items-center px-6 h-14 bg-muted/50 rounded-full hover:bg-card transition-colors group focus-within:bg-card focus-within:ring-2 focus-within:ring-primary/20">
+              <Search className="w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <input
                 type="text"
                 placeholder="Where do you want to go?"
-                className="w-full bg-transparent border-none focus:ring-0 text-gray-700 font-bold placeholder:text-gray-400 ml-3 outline-none"
+                className="w-full bg-transparent border-none focus:ring-0 text-foreground font-bold placeholder:text-muted-foreground ml-3 outline-none"
               />
             </div>
-            <button className="h-14 px-8 bg-[#00DC33] text-white rounded-full font-bold transition-all hover:shadow-lg hover:scale-105 active:scale-95">
+            <button className="btn-primary">
               Search
             </button>
           </div>
@@ -58,7 +57,7 @@ export function HomePage() {
       {/* Reviews Section */}
       <section className="py-20 px-4 md:px-8">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-12 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-12 text-center font-display">
             Stories from the road
           </h2>
 

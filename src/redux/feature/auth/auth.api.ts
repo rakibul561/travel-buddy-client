@@ -54,7 +54,7 @@ export const authApi = baseApi.injectEndpoints({
       query: (formData) => ({
         url: "/users/profile",
         method: "PATCH",
-        data: formData, // ✅ Change 'body' to 'data'
+        data: formData,
       }),
       invalidatesTags: ["USER"],
     }),
