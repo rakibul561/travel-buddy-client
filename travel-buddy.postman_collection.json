@@ -1,0 +1,658 @@
+{
+  "info": {
+    "_postman_id": "fa557a43-3ad5-4142-8b5e-d4b9375aea43",
+    "name": "travel-buddy",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "42736424"
+  },
+  "item": [
+    {
+      "name": "Otp-Sender",
+      "item": [
+        {
+          "name": "otp-send",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"email\": \"rakib101500@gmail.com\",\r\n   \"name\" : \"rakib\"\r\n \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/otp/send",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "otp",
+                "send"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify-otp",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\" : \"rakib101500@gmail.com\",\r\n    \"otp\" : \"542654\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/otp/verify",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "otp",
+                "verify"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "create-user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "306a6365-87bc-464c-9799-3791e6647d86",
+                  "src": "/C:/Users/Rakibul Hasan/Downloads/git-wrapped-nayeem-miah.png"
+                },
+                {
+                  "key": "data",
+                  "value": "{\n  \"name\": \"rakib\",\n  \"fullName\": \"Sadi Hasan\",\n  \"email\": \"rakib@gmail.com\",\n  \"password\": \"123456\",\n  \"role\": \"USER\"\n}\n",
+                  "type": "text",
+                  "uuid": "67bdeb56-4db2-481f-a7bb-f1a07869949e"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://travel-buddy-platform-1.onrender.com/api/v1/users/register",
+              "protocol": "https",
+              "host": [
+                "travel-buddy-platform-1",
+                "onrender",
+                "com"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-all-user",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "https://travel-buddy-platform-1.onrender.com/api/v1/users/me",
+              "protocol": "https",
+              "host": [
+                "travel-buddy-platform-1",
+                "onrender",
+                "com"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "find-UserById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/users/694249da73097f4c1b26af02",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "694249da73097f4c1b26af02"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upadate-profile",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "c366a650-2276-4cd0-9d3e-38a0922a0d6f",
+                  "src": "/C:/Users/Rakibul Hasan/Downloads/airpods.webp"
+                },
+                {
+                  "key": "data",
+                  "value": "{\n    \n    \"email\": \"user1@gmail.com\",\n    \"fullName\" : \"rakibul hasa\",\n    \"oldPassword\":\"12345678\",\n    \"newPassword\" : \"123456\"\n}",
+                  "type": "text",
+                  "uuid": "93579832-d894-4ef0-b938-95b25fab6b39"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/users/profile",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteUser",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "306a6365-87bc-464c-9799-3791e6647d86",
+                  "src": "/C:/Users/Rakibul Hasan/Pictures/Screenshots/Screenshot 2025-12-11 192614.png"
+                },
+                {
+                  "key": "data",
+                  "value": "{\n  \"name\": \" rakib\",\n  \"email\": \"rakib101500@gmail.com\",\n  \"password\": \"123456\"\n}\n",
+                  "type": "text",
+                  "uuid": "67bdeb56-4db2-481f-a7bb-f1a07869949e"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/users/6942496443f84b3829e15913",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "6942496443f84b3829e15913"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "login User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\r\n   \"email\": \"rakib101500@gmail.com\",\r\n   \"password\" : \"123456\"\r\n} ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/auth/logout",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Travel",
+      "item": [
+        {
+          "name": "create-travel",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "7ea328ff-b20f-4027-af95-ba96c242fc54",
+                  "src": "/C:/Users/Rakibul Hasan/Downloads/my-image.jpeg"
+                },
+                {
+                  "key": "data",
+                  "value": "{\n  \"destination\": \"Thailand Trip\",\n  \"country\": \"Thailand\",\n  \"city\": \"Bangkok\",\n  \"startDate\": \"2025-02-10T00:00:00.000Z\",\n  \"endDate\": \"2025-02-18T00:00:00.000Z\",\n  \"budgetMin\": 1000,\n  \"budgetMax\": 1500,\n  \"travelType\": \"SOLO\",\n  \"description\": \"Looking for travel partners\"\n}\n",
+                  "type": "text",
+                  "uuid": "540218a8-8179-4eee-a86a-cfbf411c3689"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/travel-plans",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "travel-plans"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Match Travel",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\" : \"d00364bb-6d42-4946-bc34-2a11b2cc24d6\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/travel-plans/match",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "travel-plans",
+                "match"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all travel palns",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "search",
+                "value": "",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/travel-plans",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "travel-plans"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Obcaecati ex invento",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "complate-travel",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/travel-plans/complete",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "travel-plans",
+                "complete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Single Travel",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/travel-plans/0436b774-62fe-4115-9475-ffbfb7ad6923",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "travel-plans",
+                "0436b774-62fe-4115-9475-ffbfb7ad6923"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get my travel",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/travel-plans/my",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "travel-plans",
+                "my"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "join Request",
+      "item": [
+        {
+          "name": "join request send",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n    {\r\n  \"travelPlanId\": \"da924808-9c25-4250-9834-e0dd46e9ca8c\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/join-requests",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "join-requests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "my-request",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "update-status",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "review",
+      "item": [
+        {
+          "name": "create-review",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Subscription",
+      "item": [
+        {
+          "name": "create-subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"plan\": \"MONTHLY\" }\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://travel-buddy-platform-1.onrender.com/api/v1/payment/subscription",
+              "protocol": "https",
+              "host": [
+                "travel-buddy-platform-1",
+                "onrender",
+                "com"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payment",
+                "subscription"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify-subscriptio",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "get-all-payment",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"destination\": \"Thailand Trip\",\r\n  \"country\": \"Thailand\",\r\n  \"city\": \"Bangkok\",\r\n  \"startDate\": \"2025-02-10T00:00:00.000Z\",\r\n  \"endDate\": \"2025-02-18T00:00:00.000Z\",\r\n  \"budgetMin\": 1000,\r\n  \"budgetMax\": 1500,\r\n  \"travelType\": \"SOLO\",\r\n  \"description\": \"Looking for travel partners\"\r\n}\r\n"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/payment",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "payment"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

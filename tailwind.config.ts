@@ -19,6 +19,7 @@ const config: Config = {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Poppins', 'Inter', 'sans-serif'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
       },
       colors: {
         // Theme Colors from CSS Variables
@@ -51,7 +52,7 @@ const config: Config = {
           DEFAULT: 'hsl(var(--popover))',
           foreground: 'hsl(var(--popover-foreground))',
         },
-        
+
         // Legacy/Custom Colors (kept for backward compatibility)
         sunny: '#FFD93D',
         coral: '#FF6B9D',

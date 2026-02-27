@@ -1,26 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import {
-  Camera,
-  Eye,
-  EyeOff,
-  Globe,
-  Lock,
-  Mail,
-  User,
-  Sparkles,
-  MapPin,
-  Users,
-  Globe2,
-} from "lucide-react";
+import { Camera, Eye, EyeOff, Globe, Lock, Mail, User, Compass, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
-import Logo from "../assets/Logo";
 import { useRegisterMutation } from "../redux/feature/auth/auth.api";
 import { Label } from "./ui/label";
 import Link from "next/link";
+import { Alert, AlertDescription } from "./ui/alert";
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -36,7 +24,6 @@ const RegisterForm = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreviewImage(reader.result as string);
@@ -53,239 +40,124 @@ const RegisterForm = () => {
       const rawFormData = new FormData(form);
 
       const file = rawFormData.get("file");
+      const password = rawFormData.get("password") as string;
+      const confirmPassword = rawFormData.get("confirmPassword") as string;
+
+      if (password !== confirmPassword) {
+        toast.error("Passwords do not match");
+        return;
+      }
 
       const data = {
         name: rawFormData.get("name"),
         fullName: rawFormData.get("fullName"),
         email: rawFormData.get("email"),
-        password: rawFormData.get("password"),
+        password,
         role: "USER",
       };
 
       const formData = new FormData();
-      if (file) {
+      if (file && (file as File).size > 0) {
         formData.append("file", file as File);
+      } else {
+        toast.error("Profile picture is required");
+        return;
       }
       formData.append("data", JSON.stringify(data));
 
       const res = await register(formData).unwrap();
-      console.log("REGISTER RESPONSE:", res);
-
       toast.success("Registration successful 🎉");
       formRef.current?.reset();
       setPreviewImage(null);
       router.push("/login");
     } catch (error: any) {
       console.error("Register error:", error);
-
       const message = error?.data?.message || "Registration failed";
-
       toast.error(message);
-      setState({
-        success: false,
-        message,
-      });
+      setState({ success: false, message });
     }
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* LEFT SIDE - Hero Section */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-accent via-accent/90 to-primary relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-20 right-20 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse-slow" />
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-float" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl" />
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 flex flex-col justify-center px-16 text-white">
-          <div className="mb-8 flex items-center gap-3">
-            <div className="p-3 bg-white/20 backdrop-blur rounded-2xl">
-              <Logo />
-            </div>
-            <span className="text-4xl font-bold font-display">Travel</span>
-          </div>
-
-          <h1 className="text-5xl font-extrabold mb-6 leading-tight font-display">
-            Start Your Journey<br />
-            Join Our Community
-          </h1>
-
-          <p className="text-xl text-white/90 mb-12 max-w-md leading-relaxed">
-            Create your account and unlock a world of travel opportunities. Connect, explore, and adventure together!
-          </p>
-
-          {/* Features */}
-          <div className="space-y-6">
-            <div className="flex items-start gap-4 group">
-              <div className="p-3 bg-white/20 backdrop-blur rounded-xl group-hover:scale-110 transition-transform">
-                <MapPin className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg mb-1">Discover Destinations</h3>
-                <p className="text-white/80 text-sm">Access exclusive travel guides and tips</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 group">
-              <div className="p-3 bg-white/20 backdrop-blur rounded-xl group-hover:scale-110 transition-transform">
-                <Users className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg mb-1">Build Connections</h3>
-                <p className="text-white/80 text-sm">Meet travelers from around the globe</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 group">
-              <div className="p-3 bg-white/20 backdrop-blur rounded-xl group-hover:scale-110 transition-transform">
-                <Globe2 className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg mb-1">Share Experiences</h3>
-                <p className="text-white/80 text-sm">Document and share your adventures</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Benefits */}
-          <div className="mt-16 p-6 bg-white/10 backdrop-blur rounded-2xl border border-white/20">
-            <h3 className="font-bold text-lg mb-4">Why Join Us?</h3>
-            <ul className="space-y-2 text-white/90 text-sm">
-              <li className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-white" />
-                Free to join and use
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-white" />
-                Verified traveler community
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-white" />
-                Safe and secure platform
-              </li>
-            </ul>
-          </div>
-        </div>
+    <div className="min-h-screen relative flex items-center justify-center bg-[#FAFAFA] text-foreground p-4 overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-emerald-100/30 rounded-full blur-[100px] -z-10" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-gray-200/40 rounded-full blur-[100px] -z-10" />
       </div>
 
-      {/* RIGHT SIDE - Register Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background overflow-y-auto">
-        <div className="w-full max-w-md py-8">
-          {/* Mobile Logo */}
-          <div className="lg:hidden flex justify-center mb-8">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-primary/10 rounded-2xl">
-                <Logo />
-              </div>
-              <span className="text-3xl font-bold text-gradient font-display">Travel</span>
+      <div className="w-full max-w-[480px] relative z-10 py-10">
+        {/* Logo area */}
+        <div className="flex justify-center mb-8">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-primary-foreground transform group-hover:-rotate-3 transition-transform">
+              <Compass className="w-6 h-6" />
             </div>
-          </div>
+            <span className="text-2xl font-bold tracking-tight">TravelBuddy.</span>
+          </Link>
+        </div>
 
-          {/* Form Header */}
+        {/* Card */}
+        <div className="bg-white rounded-3xl p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-gray-100">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-foreground mb-2 font-display">Create Your Account</h2>
-            <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <p className="text-sm font-medium text-muted-foreground">
-                Join our community of travelers
-              </p>
-            </div>
+            <h1 className="text-2xl font-bold mb-2">Create an account</h1>
+            <p className="text-muted-foreground text-sm">Join our community of travelers today</p>
           </div>
 
-          {/* Form */}
           <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
             {/* Profile Image */}
-            <div className="flex justify-center">
+            <div className="flex justify-center mb-6">
               <div className="relative group">
-                <div className="w-28 h-28 rounded-full bg-muted/50 border-2 border-border overflow-hidden flex items-center justify-center transition-all group-hover:border-primary">
+                <div className="w-24 h-24 rounded-full bg-gray-50 border-2 border-dashed border-gray-200 overflow-hidden flex items-center justify-center transition-all group-hover:border-primary">
                   {previewImage ? (
-                    <img
-                      src={previewImage}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={previewImage} alt="Preview" className="w-full h-full object-cover" />
                   ) : (
-                    <User className="w-12 h-12 text-muted-foreground" />
+                    <User className="w-10 h-10 text-gray-300" />
                   )}
                 </div>
-
-                <label className="absolute bottom-0 right-0 w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground cursor-pointer hover:scale-110 transition-transform shadow-lg">
-                  <Camera size={18} />
-                  <input
-                    type="file"
-                    name="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleFileChange}
-                    required
-                  />
+                <label className="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground cursor-pointer hover:scale-110 transition-transform shadow-lg">
+                  <Camera size={14} />
+                  <input type="file" name="file" accept="image/*" className="hidden" onChange={handleFileChange} required />
                 </label>
               </div>
             </div>
 
-            {/* Username */}
-            <div className="space-y-2">
-              <Label className="text-sm font-semibold text-foreground">Username</Label>
-              <div className="relative group">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <input
-                  name="name"
-                  placeholder="Choose a username"
-                  required
-                  className="w-full pl-12 h-12 border-2 border-border rounded-xl bg-muted/50 focus:bg-card focus:border-primary outline-none transition-all text-foreground"
-                />
+            <div className="grid grid-cols-2 gap-4">
+              {/* Username */}
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold ml-1">Username</Label>
+                <div className="relative group">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
+                  <input name="name" placeholder="johndoe" required className="w-full pl-11 h-12 bg-gray-50/50 border border-gray-200 focus:bg-white rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm" />
+                </div>
               </div>
-            </div>
 
-            {/* Full Name */}
-            <div className="space-y-2">
-              <Label className="text-sm font-semibold text-foreground">Full Name</Label>
-              <div className="relative group">
-                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <input
-                  name="fullName"
-                  placeholder="Your full name"
-                  required
-                  className="w-full pl-12 h-12 border-2 border-border rounded-xl bg-muted/50 focus:bg-card focus:border-primary outline-none transition-all text-foreground"
-                />
+              {/* Full Name */}
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold ml-1">Full Name</Label>
+                <div className="relative group">
+                  <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
+                  <input name="fullName" placeholder="John Doe" required className="w-full pl-11 h-12 bg-gray-50/50 border border-gray-200 focus:bg-white rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm" />
+                </div>
               </div>
             </div>
 
             {/* Email */}
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-foreground">Email Address</Label>
+              <Label className="text-sm font-semibold ml-1">Email</Label>
               <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="you@example.com"
-                  required
-                  className="w-full pl-12 h-12 border-2 border-border rounded-xl bg-muted/50 focus:bg-card focus:border-primary outline-none transition-all text-foreground"
-                />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
+                <input type="email" name="email" placeholder="name@example.com" required className="w-full pl-11 h-12 bg-gray-50/50 border border-gray-200 focus:bg-white rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm" />
               </div>
             </div>
 
             {/* Password */}
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-foreground">Password</Label>
+              <Label className="text-sm font-semibold ml-1">Password</Label>
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  placeholder="Create a strong password"
-                  required
-                  className="w-full pl-12 pr-12 h-12 border-2 border-border rounded-xl bg-muted/50 focus:bg-card focus:border-primary outline-none transition-all text-foreground"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
-                >
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
+                <input type={showPassword ? "text" : "password"} name="password" placeholder="••••••••" required className="w-full pl-11 pr-11 h-12 bg-gray-50/50 border border-gray-200 focus:bg-white rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm" />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
@@ -293,21 +165,11 @@ const RegisterForm = () => {
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-foreground">Confirm Password</Label>
+              <Label className="text-sm font-semibold ml-1">Confirm Password</Label>
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  placeholder="Confirm your password"
-                  required
-                  className="w-full pl-12 pr-12 h-12 border-2 border-border rounded-xl bg-muted/50 focus:bg-card focus:border-primary outline-none transition-all text-foreground"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
-                >
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
+                <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword" placeholder="••••••••" required className="w-full pl-11 pr-11 h-12 bg-gray-50/50 border border-gray-200 focus:bg-white rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm" />
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
                   {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
@@ -315,35 +177,28 @@ const RegisterForm = () => {
 
             {/* Error */}
             {state?.success === false && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 animate-slide-in-from-top">
-                {state.message}
-              </div>
+              <Alert variant="destructive" className="animate-in fade-in zoom-in duration-300 rounded-xl bg-red-50 border-red-100 text-red-600">
+                <AlertDescription>{state.message}</AlertDescription>
+              </Alert>
             )}
 
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="btn-primary w-full h-12 text-base font-bold shadow-glow disabled:opacity-50"
-            >
+            {/* Submit Button */}
+            <button type="submit" disabled={isLoading} className="w-full flex items-center justify-center gap-2 h-12 bg-primary text-primary-foreground hover:bg-primary/90 font-bold rounded-xl transition-all disabled:opacity-70 group mt-2">
               {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Creating Account...
-                </span>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
-                "Create Your Account"
+                <>Sign Up <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></>
               )}
             </button>
-
-            <p className="text-center text-sm text-muted-foreground">
-              Already have an account?{" "}
-              <Link href="/login" className="font-bold text-primary hover:underline">
-                Login here
-              </Link>
-            </p>
           </form>
         </div>
+
+        <p className="text-center mt-6 text-sm text-muted-foreground">
+          Already have an account?{" "}
+          <Link href="/login" className="font-bold text-primary hover:underline transition-all">
+            Sign in instead
+          </Link>
+        </p>
       </div>
     </div>
   );

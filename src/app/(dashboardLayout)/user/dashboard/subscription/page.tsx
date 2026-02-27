@@ -1,12 +1,16 @@
 "use client";
 
 import { useCreateSubscriptionMutation } from "@/redux/feature/travel/travel.api";
+import { useUserInfoQuery } from "@/redux/feature/auth/auth.api";
 import { Button } from "@/components/ui/button";
 import { Check, Zap, Crown, Shield } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function SubscriptionPage() {
+    const { data: userData, isLoading: isUserLoading } = useUserInfoQuery(undefined);
     const [createSubscription, { isLoading }] = useCreateSubscriptionMutation();
+
+    const currentPlan = userData?.data?.subscriptionPlan || "FREE";
 
     const handleSubscribe = async (plan: "MONTHLY" | "YEARLY" | "FREE") => {
         try {
@@ -101,10 +105,10 @@ export default function SubscriptionPage() {
 
                         <Button
                             onClick={() => handleSubscribe(plan.planKey)}
-                            disabled={isLoading}
-                            className={`w-full h-12 rounded-xl font-bold text-lg ${plan.popular ? 'btn-primary shadow-lg shadow-primary/20' : 'bg-gray-900 text-white hover:bg-gray-800'}`}
+                            disabled={isLoading || plan.planKey === currentPlan}
+                            className={`w-full h-12 rounded-xl font-bold text-lg ${plan.planKey === currentPlan ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : plan.popular ? 'btn-primary shadow-lg shadow-primary/20' : 'bg-gray-900 text-white hover:bg-gray-800'}`}
                         >
-                            {isLoading ? "Processing..." : plan.name === "Free" ? "Get Started" : `Subscribe ${plan.name}`}
+                            {plan.planKey === currentPlan ? "Active Plan" : isLoading ? "Processing..." : plan.name === "Free" ? "Get Started" : `Subscribe ${plan.name}`}
                         </Button>
                     </div>
                 ))}

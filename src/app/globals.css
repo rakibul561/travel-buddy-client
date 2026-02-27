@@ -1,5 +1,5 @@
 /* Import Modern Fonts - Must come first */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,265 +8,120 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================
-   🎨 THEME VARIABLES - Light Mode
+   🎨 THEME VARIABLES - Clean Blue Medical/Tech Travel
    ============================================ */
 :root {
-  /* Main Brand Colors - Focused on Green */
-  --primary: 134 100% 43%;
-  /* #00DC33 - The main vibrant green */
+  /* Soft Sky Blue */
+  --primary: 210 65% 65%;
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 140 30% 96%;
-  /* Light Mint/Green tint for backgrounds */
-  --secondary-foreground: 145 80% 25%;
+  /* Darker Blue for secondary actions */
+  --secondary: 215 25% 27%;
+  --secondary-foreground: 0 0% 100%;
 
-  --accent: 45 100% 51%;
-  /* Warm Amber - Only for small highlights */
-  --accent-foreground: 30 40% 20%;
+  /* Accent color */
+  --accent: 210 65% 95%;
+  --accent-foreground: 210 65% 40%;
 
-  /* Neutrals - Clean and Professional */
+  /* Clean White Background */
   --background: 0 0% 100%;
-  /* Pure White */
-  --foreground: 220 10% 20%;
-  /* Softer Black/Dark Grey */
+  --foreground: 220 20% 15%;
 
-  --muted: 220 10% 96%;
-  /* Very light grey */
-  --muted-foreground: 220 10% 45%;
+  --muted: 210 20% 96%;
+  --muted-foreground: 215 15% 45%;
 
   --card: 0 0% 100%;
-  --card-foreground: 220 10% 20%;
+  --card-foreground: 220 20% 15%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 220 10% 20%;
+  --popover-foreground: 220 20% 15%;
 
-  --border: 220 15% 90%;
-  --input: 220 15% 90%;
-  --ring: 134 100% 43%;
-  /* Match Primary */
+  --border: 214 30% 92%;
+  --input: 214 30% 92%;
+  --ring: 210 65% 65%;
 
   --radius: 1rem;
-
-  /* Sidebar - keeping it clean */
-  --sidebar-background: 0 0% 98%;
-  --sidebar-foreground: 240 5.3% 26.1%;
-  --sidebar-primary: 240 5.9% 10%;
-  --sidebar-primary-foreground: 0 0% 98%;
-  --sidebar-accent: 240 4.8% 95.9%;
-  --sidebar-accent-foreground: 240 5.9% 10%;
-  --sidebar-border: 220 13% 91%;
-  --sidebar-ring: 217.2 91.2% 59.8%;
 }
 
-/* ============================================
-   🌙 DARK MODE THEME
-   ============================================ */
 .dark {
-  --background: 240 10% 3.9%;
+  --background: 220 20% 10%;
   --foreground: 0 0% 98%;
-  --card: 240 10% 8%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 10% 8%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 142 76% 36%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --accent: 340 82% 52%;
-  --accent-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 142 76% 36%;
 
-  --sidebar: 240 5.9% 10%;
-  --sidebar-foreground: 240 4.8% 95.9%;
-  --sidebar-primary: 142 76% 36%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 240 3.7% 15.9%;
-  --sidebar-accent-foreground: 240 4.8% 95.9%;
-  --sidebar-border: 240 3.7% 15.9%;
-  --sidebar-ring: 142 76% 36%;
+  --card: 220 20% 12%;
+  --card-foreground: 0 0% 98%;
+
+  --popover: 220 20% 12%;
+  --popover-foreground: 0 0% 98%;
+
+  --primary: 210 65% 60%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 215 25% 27%;
+  --secondary-foreground: 0 0% 100%;
+
+  --accent: 215 25% 18%;
+  --accent-foreground: 0 0% 98%;
+
+  --muted: 215 25% 18%;
+  --muted-foreground: 215 15% 65%;
+
+  --border: 215 25% 20%;
+  --input: 215 25% 20%;
+  --ring: 210 65% 60%;
 }
 
-/* ============================================
-   🎯 BASE STYLES
-   ============================================ */
 @layer base {
   * {
     @apply border-border;
   }
 
-  html {
-    @apply scroll-smooth antialiased;
-  }
-
   body {
-    @apply bg-background text-foreground font-sans;
-    font-feature-settings: 'rlig' 1, 'calt' 1;
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
   }
 
-  /* Headings */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    @apply font-bold tracking-tight;
-  }
-
-  h1 {
-    @apply text-4xl md:text-5xl lg:text-6xl;
-  }
-
-  h2 {
-    @apply text-3xl md:text-4xl lg:text-5xl;
-  }
-
-  h3 {
-    @apply text-2xl md:text-3xl lg:text-4xl;
-  }
-
-  /* Focus Styles */
-  *:focus-visible {
-    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+    font-family: 'Inter', sans-serif;
+    @apply tracking-tight font-bold text-slate-800;
   }
 }
 
-/* ============================================
-   🧩 COMPONENT UTILITIES
-   ============================================ */
 @layer components {
-
-  /* Glass Effect */
-  .glass {
-    @apply bg-white/70 backdrop-blur-lg border border-white/20;
-  }
-
-  .glass-dark {
-    @apply bg-gray-900/70 backdrop-blur-lg border border-gray-800/20;
-  }
-
-  /* Gradient Backgrounds */
-  .gradient-primary {
-    @apply bg-gradient-to-br from-primary to-primary/80;
-  }
-
-  .gradient-accent {
-    @apply bg-gradient-to-br from-accent to-accent/80;
-  }
-
-  .gradient-warm {
-    @apply bg-gradient-to-br from-amber-400 via-orange-400 to-pink-400;
-  }
-
-  /* Card Styles */
-  .card {
-    @apply bg-card text-card-foreground rounded-2xl border shadow-md;
-  }
-
-  .card-hover {
-    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
-  }
-
-  /* Button Variants */
   .btn-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-6 py-3 rounded-full transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95;
+    @apply bg-primary text-white hover:bg-primary/90 font-semibold px-6 py-3 rounded-full transition-all duration-300;
   }
 
   .btn-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold px-6 py-3 rounded-full transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95;
+    @apply bg-background text-foreground border border-border hover:bg-accent font-semibold px-6 py-3 rounded-full transition-all duration-300;
   }
 
-  /* Input Styles */
   .input {
-    @apply bg-background border border-input rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all;
+    @apply bg-background border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-sm;
+  }
+
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/50 shadow-sm;
+  }
+
+  .glass-card {
+    @apply bg-white border border-border rounded-2xl shadow-sm hover:shadow-md transition-shadow;
   }
 }
 
-/* ============================================
-   ✨ UTILITY CLASSES
-   ============================================ */
 @layer utilities {
-
-  /* Text Gradients */
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-accent to-secondary;
+    @apply text-primary;
   }
 
-  .text-gradient-primary {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60;
+  .mesh-bg {
+    background-color: #ffffff;
+    background-image:
+      radial-gradient(at 50% 0%, hsla(210, 65%, 90%, 0.5) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(210, 65%, 85%, 0.3) 0px, transparent 50%);
   }
-
-  /* Animations */
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .animate-pulse-slow {
-    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  .animate-shimmer {
-    animation: shimmer 2s linear infinite;
-  }
-
-  /* Shadows */
-  .shadow-glow {
-    box-shadow: 0 0 20px rgba(0, 220, 51, 0.3);
-  }
-
-  .shadow-glow-accent {
-    box-shadow: 0 0 20px rgba(255, 107, 157, 0.3);
-  }
-}
-
-/* ============================================
-   🎬 KEYFRAME ANIMATIONS
-   ============================================ */
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-/* ============================================
-   📱 RESPONSIVE UTILITIES
-   ============================================ */
-@media (max-width: 768px) {
-  .container {
-    @apply px-4;
-  }
-}
-
-/* ============================================
-   🎨 THEME INLINE (for Tailwind v4 compatibility)
-   ============================================ */
-@theme inline {
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 }

@@ -63,7 +63,7 @@ const userNavItems = [
     icon: MapPin,
   },
 
-    {
+  {
     title: "My-travel",
     url: "/user/dashboard/my-travels",
     icon: Settings,
@@ -74,6 +74,16 @@ const userNavItems = [
     icon: BookOpen,
   },
 
+  {
+    title: "Join Requests",
+    url: "/user/dashboard/join-request",
+    icon: Users,
+  },
+  {
+    title: "Subscription",
+    url: "/user/dashboard/subscription",
+    icon: Settings,
+  },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

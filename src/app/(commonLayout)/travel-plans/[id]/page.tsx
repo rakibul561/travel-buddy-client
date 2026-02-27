@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, DollarSign, User, Clock, ArrowLeft, Send } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import ChatBox from "@/components/ChatBox";
 
 export default function TravelDetailsPage() {
   const { id } = useParams();
@@ -109,6 +110,11 @@ export default function TravelDetailsPage() {
               <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
                 {travel.description || "No description provided for this trip."}
               </p>
+            </div>
+
+            {/* Chat Box */}
+            <div className="mt-8">
+              <ChatBox travelPlanId={id as string} user={user} />
             </div>
           </div>
 

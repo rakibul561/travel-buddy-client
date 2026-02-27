@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { LayoutDashboard, LogOut, MapPin, Menu, Shield, User, UserCircle } from "lucide-react";
+import {
+  LogOut,
+  User,
+  Menu,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import Logo from "../../assets/Logo";
 import {
   authApi,
   useLogOutMutation,
@@ -20,6 +23,7 @@ export default function NavbarClient() {
   const pathName = usePathname();
   const [logout] = useLogOutMutation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading, refetch } = useUserInfoQuery(undefined, {
@@ -30,221 +34,130 @@ export default function NavbarClient() {
     refetch();
   }, [pathName, refetch]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: any) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   if (isLoading) return null;
-
-  // Dashboard এ navbar hide
   if (pathName.includes("/dashboard")) return null;
 
   const user = data?.data;
-  const role = user?.role;
-
-  // =====================
-  // NAV LINKS BY ROLE
-  // =====================
-
-  const loggedOutLinks = [
-    { name: "Explore Travelers", href: "/explore-travelers" },
-    { name: "Find Travel Buddy", href: "/find-travel-buddy" },
-  ];
-
-  const userLinks = [
-    { name: "Explore Travelers", href: "/explore-travelers" },
-    { name: "My Travel Plans", href: "/travel-plans" },
-    { name: "Dashboard", href: "/user/dashboard" },
-  ];
-
-  const adminLinks = [
-    { name: "Admin Dashboard", href: "/admin/dashboard" },
-    { name: "Manage Users", href: "/admin/dashboard/allUser" },
-    { name: "Manage Travel Plans", href: "/admin/dashboard/travels" },
-  ];
-
-  const navLinks =
-    role === "ADMIN"
-      ? adminLinks
-      : role === "USER"
-        ? userLinks
-        : loggedOutLinks;
-
-  // Dropdown menu links with icons
-  const dropdownLinks = user
-    ? [
-      {
-        name: "Dashboard",
-        href: role === "ADMIN" ? "/admin/dashboard" : "/user/dashboard",
-        icon: LayoutDashboard,
-      },
-      { name: "My Profile", href: "/profile", icon: UserCircle },
-      ...(role === "USER"
-        ? [{ name: "My Travel Plans", href: "/travel-plans", icon: MapPin }]
-        : []),
-      ...(role === "ADMIN"
-        ? [
-          {
-            name: "Manage Users",
-            href: "/admin/dashboard/allUser",
-            icon: Shield,
-          },
-        ]
-        : []),
-    ]
-    : [];
-
-  // =====================
-  // LOGOUT
-  // =====================
-
-  const handleLogout = async () => {
-    try {
-      await logout(undefined).unwrap();
-      dispatch(authApi.util.resetApiState());
-      setIsDropdownOpen(false);
-      router.push("/login");
-      router.refresh();
-    } catch (err) {
-      console.error("Logout failed", err);
-    }
-  };
 
   return (
-    <nav className="fixed top-4 left-0 right-0 z-50 px-4">
-      <div className="mx-auto max-w-7xl glass rounded-full shadow-lg px-8 py-3 flex items-center justify-between">
+    <nav className="fixed top-8 left-0 right-0 z-[100] flex justify-center px-4 pointer-events-none">
+      <div className="bg-white/70 backdrop-blur-xl border border-white max-w-5xl w-full rounded-2xl shadow-sm px-6 h-16 flex items-center justify-between pointer-events-auto transition-all">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <Logo />
-          <span className="text-3xl font-bold text-primary font-display">Travel</span>
+        <Link href="/" className="flex items-center group">
+          <span className="text-xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-100 text-blue-500 rounded-full flex items-center justify-center">
+              <GlobeIcon />
+            </div>
+            TravelBuddy
+          </span>
         </Link>
 
-        {/* Nav Links - Desktop */}
+        {/* Links */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className="relative text-muted-foreground font-medium transition hover:text-primary
-              after:absolute after:-bottom-1 after:left-0 after:h-[2px]
-              after:w-0 after:bg-primary after:transition-all hover:after:w-full"
-            >
-              {link.name}
-            </Link>
-          ))}
+          <Link href="/explore-travelers" className="text-[14px] font-medium text-slate-600 hover:text-blue-500 transition-colors">
+            Explore Travelers
+          </Link>
+          <Link href="/user/dashboard/match-travel" className="text-[14px] font-medium text-slate-600 hover:text-blue-500 transition-colors">
+            Find Travel Buddy
+          </Link>
+          <Link href="/#pricing" className="text-[14px] font-medium text-slate-600 hover:text-blue-500 transition-colors">
+            Pricing
+          </Link>
         </div>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-3">
-          {user ? (
-            <div className="flex items-center gap-3">
-              {/* Mobile/Tablet Dropdown */}
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center space-x-2 p-2 rounded-full border-2 border-border hover:border-primary transition-all hover:shadow-md"
-                >
-                  <Menu className="w-5 h-5 text-muted-foreground" />
-                  {user?.profilePicture ? (
-                    <img
-                      src={user.profilePicture}
-                      alt={user.name}
-                      className="w-8 h-8 rounded-full object-cover border-2 border-card"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center">
-                      <User className="w-5 h-5 text-primary-foreground" />
-                    </div>
-                  )}
+        {/* Auth Actions */}
+        <div className="flex items-center gap-4">
+          {!user ? (
+            <>
+              <Link href="/login" className="hidden sm:block text-[14px] font-medium text-slate-600 hover:text-blue-500 transition-colors">
+                Sign In
+              </Link>
+              <Link href="/register">
+                <button className="bg-blue-400 hover:bg-blue-500 text-white py-1.5 px-5 rounded-full text-sm font-semibold transition-colors shadow-sm">
+                  Get Started
                 </button>
-
-                {/* Dropdown Menu - Updated Design */}
-                {isDropdownOpen && (
-                  <div className="absolute right-0 mt-3 w-72 card rounded-2xl shadow-xl overflow-hidden z-50 animate-slide-in-from-top">
-                    {/* User Info Header with Gradient */}
-                    <div className="gradient-primary px-6 py-4 text-primary-foreground">
-                      <div className="flex items-center gap-3 mb-2">
-                        {user?.profilePicture ? (
-                          <img
-                            src={user.profilePicture}
-                            alt={user.name}
-                            className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
-                            <User className="w-6 h-6 text-white" />
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-base font-bold truncate">
-                            {user?.name || "User"}
-                          </p>
-                          <p className="text-xs text-white/80 truncate">
-                            {user?.email}
-                          </p>
-                        </div>
-                      </div>
-                      <span className="inline-flex items-center px-3 py-1 text-xs font-semibold bg-white/20 backdrop-blur text-white rounded-full">
-                        {role === "ADMIN" ? "👑 Admin" : "✈️ Traveler"}
-                      </span>
-                    </div>
-
-                    {/* Dropdown Links */}
-                    <div className="py-2">
-                      {dropdownLinks.map((link) => {
-                        const Icon = link.icon;
-                        return (
-                          <Link
-                            key={link.name}
-                            href={link.href}
-                            onClick={() => setIsDropdownOpen(false)}
-                            className="flex items-center gap-3 px-6 py-3 text-sm font-medium text-card-foreground hover:bg-primary/10 hover:text-primary transition-all group"
-                          >
-                            <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                            <span>{link.name}</span>
-                          </Link>
-                        );
-                      })}
-                    </div>
-
-                    {/* Logout Button */}
-                    <div className="border-t border-border p-2">
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-3 w-full px-6 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-xl transition-all group"
-                      >
-                        <LogOut className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        <span>Logout</span>
-                      </button>
-                    </div>
+              </Link>
+            </>
+          ) : (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="w-9 h-9 rounded-full border border-blue-100 p-0.5 hover:border-blue-400 transition-all overflow-hidden bg-white"
+              >
+                {user?.profilePicture ? (
+                  <img src={user.profilePicture} className="w-full h-full rounded-full object-cover" alt="Profile" />
+                ) : (
+                  <div className="w-full h-full rounded-full bg-slate-100 flex items-center justify-center">
+                    <User className="w-4 h-4 text-slate-400" />
                   </div>
                 )}
-              </div>
+              </button>
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-lg border border-slate-100 p-2 overflow-hidden animate-slide-in-from-top z-50">
+                  <div className="px-4 py-3 border-b border-slate-50 mb-1">
+                    <p className="text-sm font-bold text-slate-800 truncate">{user.name}</p>
+                    <p className="text-[11px] font-semibold text-blue-400 truncate uppercase mt-0.5 tracking-wider">{user.role}</p>
+                  </div>
+                  <Link href={user.role === 'ADMIN' ? '/admin/dashboard/analytices' : '/user/dashboard/create-travel'} className="flex items-center gap-3 px-4 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+                    <svg className="w-4 h-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg> Dashboard
+                  </Link>
+                  <Link href="/profile" className="flex items-center gap-3 px-4 py-2.5 text-[14px] font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+                    <User className="w-4 h-4 text-slate-400" /> My Profile
+                  </Link>
+                  <button
+                    onClick={async () => {
+                      await logout(undefined).unwrap();
+                      dispatch(authApi.util.resetApiState());
+                      router.push("/login");
+                    }}
+                    className="flex items-center gap-3 w-full px-4 py-2.5 text-[14px] font-medium text-red-500 hover:bg-red-50 rounded-lg transition-colors mt-1"
+                  >
+                    <LogOut className="w-4 h-4" /> Logout
+                  </button>
+                </div>
+              )}
             </div>
-          ) : (
-            <>
-              <Button asChild variant="ghost" className="rounded-full px-5">
-                <Link href="/login">Login</Link>
-              </Button>
-
-              <Button
-                asChild
-                className="btn-primary"
-              >
-                <Link href="/register">Register</Link>
-              </Button>
-            </>
           )}
+
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden text-slate-600 hover:text-blue-500 transition-colors ml-2">
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-20 left-4 right-4 bg-white/95 backdrop-blur-xl border border-slate-100 rounded-2xl p-6 space-y-4 shadow-xl pointer-events-auto">
+          <Link href="/explore-travelers" className="block text-base font-bold text-slate-800 py-2 border-b border-slate-50">Explore Travelers</Link>
+          <Link href="/user/dashboard/match-travel" className="block text-base font-bold text-slate-800 py-2 border-b border-slate-50">Find Travel Buddy</Link>
+          <Link href="/#pricing" className="block text-base font-bold text-slate-800 py-2 border-b border-slate-50">Pricing</Link>
+          {!user && (
+            <div className="pt-4 flex flex-col gap-3">
+              <Link href="/login" className="text-center font-bold text-slate-600 py-2.5 border border-slate-200 rounded-xl">Sign In</Link>
+              <Link href="/register" className="bg-blue-400 text-white py-2.5 rounded-xl text-center font-bold">Get Started</Link>
+            </div>
+          )}
+        </div>
+      )}
     </nav>
   );
 }
+
+// Simple Globe Icon component placeholder
+const GlobeIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+    <path d="M2 12h20" />
+  </svg>
+);

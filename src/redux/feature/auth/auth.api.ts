@@ -27,6 +27,15 @@ export const authApi = baseApi.injectEndpoints({
       invalidatesTags: ["USER"],
     }),
 
+    googleLogin: builder.mutation({
+      query: (code) => ({
+        url: "/auth/google",
+        method: "POST",
+        data: { code },
+      }),
+      invalidatesTags: ["USER"],
+    }),
+
     userInfo: builder.query({
       query: () => ({
         url: "/users/me",
@@ -66,10 +75,26 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["USER"],
     }),
+
+    sendOtp: builder.mutation({
+      query: (data) => ({
+        url: "/otp/send",
+        method: "POST",
+        data,
+      }),
+    }),
+    verifyOtp: builder.mutation({
+      query: (data) => ({
+        url: "/otp/verify",
+        method: "POST",
+        data,
+      }),
+    }),
   }),
 });
 export const {
   useLogInMutation,
+  useGoogleLoginMutation,
   useUserInfoQuery,
   useRegisterMutation,
   useLogOutMutation,
@@ -77,4 +102,6 @@ export const {
   useDeleteUserMutation,
   useUpdateUserMutation,
   useAllUserFromDbQuery,
+  useSendOtpMutation,
+  useVerifyOtpMutation
 } = authApi;

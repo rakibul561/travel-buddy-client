@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import React from 'react'
-import { Star } from 'lucide-react'
+import { Star, Quote } from 'lucide-react'
+
 interface ReviewCardProps {
   name: string
   location: string
@@ -8,6 +9,7 @@ interface ReviewCardProps {
   text: string
   rating: number
 }
+
 export function ReviewCard({
   name,
   location,
@@ -16,35 +18,36 @@ export function ReviewCard({
   rating,
 }: ReviewCardProps) {
   return (
-    <div className="relative group">
+    <div className="relative group h-full">
       {/* Chat Bubble */}
-      <div className="bg-white p-8 rounded-3xl rounded-bl-none shadow-sm border border-gray-100 relative z-10 transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-warm">
-        <div className="flex gap-1 mb-4">
+      <div className="glass-card bg-white/70 dark:bg-card/70 p-8 rounded-[2rem] rounded-bl-none border border-white/40 dark:border-white/10 relative z-10 transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-primary/10 h-full flex flex-col">
+        <Quote className="absolute top-6 right-6 w-8 h-8 text-primary/10" />
+        <div className="flex gap-1 mb-6">
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
-              className={`w-5 h-5 ${i < rating ? 'text-sunny fill-sunny' : 'text-gray-200'}`}
+              className={`w-4 h-4 ${i < rating ? 'text-secondary fill-secondary' : 'text-muted'}`}
             />
           ))}
         </div>
-        <p className="text-gray-600 font-medium leading-relaxed mb-4">
+        <p className="text-foreground/80 font-medium leading-relaxed mb-4 flex-grow text-sm md:text-base">
           "{text}"
         </p>
       </div>
 
       {/* Triangle for bubble effect */}
-      <div className="absolute left-0 bottom-[50px] w-6 h-6 bg-white border-b border-l border-gray-100 transform -rotate-45 translate-y-full z-0"></div>
+      <div className="absolute left-0 bottom-[4rem] w-8 h-8 bg-white/70 dark:bg-card/70 border-b border-l border-white/40 dark:border-white/10 transform -rotate-45 translate-y-full z-0 backdrop-blur-2xl"></div>
 
       {/* User Info */}
-      <div className="flex items-center gap-4 mt-6 ml-2">
+      <div className="flex items-center gap-4 mt-8 ml-4">
         <img
           src={image}
           alt={name}
-          className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
+          className="w-14 h-14 rounded-full object-cover border-[3px] border-background shadow-md group-hover:scale-105 transition-transform duration-300"
         />
         <div>
-          <h4 className="font-bold text-gray-800">{name}</h4>
-          <p className="text-xs font-bold text-gray-400 uppercase">
+          <h4 className="font-bold text-foreground text-lg">{name}</h4>
+          <p className="text-xs font-bold text-primary uppercase tracking-wider">
             {location}
           </p>
         </div>

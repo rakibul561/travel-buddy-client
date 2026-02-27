@@ -15,6 +15,34 @@ export const travelApi = baseApi.injectEndpoints({
       invalidatesTags: ["TRAVEL"],
     }),
 
+    // 🔹 View requests sent by me
+    getMySentRequests: builder.query({
+      query: () => ({
+        url: "/join-requests/my-requests",
+        method: "GET",
+      }),
+      providesTags: ["REQUESTS"],
+    }),
+
+    // 🔹 View requests received for my trips
+    getMyReceivedRequests: builder.query({
+      query: () => ({
+        url: "/join-requests/received-requests",
+        method: "GET",
+      }),
+      providesTags: ["REQUESTS"],
+    }),
+
+    // 🔹 Respond to request (accept/reject)
+    respondToJoinRequest: builder.mutation({
+      query: ({ requestId, status }) => ({
+        url: `/join-requests/${requestId}`,
+        method: "PATCH",
+        data: { status },
+      }),
+      invalidatesTags: ["REQUESTS", "TRAVEL"],
+    }),
+
     getSingleTravels: builder.query<any, string>({
       query: (id) => ({
         url: `/travel-plans/${id}`,
@@ -49,7 +77,7 @@ export const travelApi = baseApi.injectEndpoints({
         method: "POST",
         data: { travelPlanId },
       }),
-      invalidatesTags: ["TRAVEL"],
+      invalidatesTags: ["TRAVEL", "REQUESTS"],
     }),
 
     // 🔹 Match Travel
@@ -89,6 +117,7 @@ export const travelApi = baseApi.injectEndpoints({
         method: "POST",
         data: body,
       }),
+      invalidatesTags: ["USER"],
     }),
 
     getAllpayment: builder.query({
@@ -111,4 +140,7 @@ export const {
   useGetSingleTravelsQuery,
   useSendJoinRequestMutation,
   useCreateSubscriptionMutation,
+  useGetMySentRequestsQuery,
+  useGetMyReceivedRequestsQuery,
+  useRespondToJoinRequestMutation,
 } = travelApi;

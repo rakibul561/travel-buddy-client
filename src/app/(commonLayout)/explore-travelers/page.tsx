@@ -5,18 +5,18 @@
 import { useGetAllTravelsQuery } from '@/redux/feature/travel/travel.api';
 import {
   Calendar,
-  CheckCircle2,
   DollarSign,
   Filter,
   Globe,
   Loader2,
   MapPin,
   Search,
-  Users,
-  XCircle,
+  Users
 } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import TravelPlanCard from '@/components/travel/TravelPlanCard';
 
 export default function ExploreTravelers() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -51,16 +51,6 @@ export default function ExploreTravelers() {
   const meta = data?.meta;
 
   /* ---------------- Helpers ---------------- */
-  const getStatusColor = (status: string) =>
-    status === 'PLANNED' ? 'bg-blue-500' : 'bg-gray-500';
-
-  const getStatusIcon = (isActive: boolean) =>
-    isActive ? (
-      <CheckCircle2 className="h-4 w-4 text-[#00DC33]" />
-    ) : (
-      <XCircle className="h-4 w-4 text-red-500" />
-    );
-
   const formatDate = (date: string) =>
     new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -71,203 +61,129 @@ export default function ExploreTravelers() {
   /* ---------------- Loading ---------------- */
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-[#00DC33]" />
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-red-500 font-semibold">Failed to load travel plans</p>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <p className="text-red-500 font-semibold text-lg">Failed to load travel plans. Please try again later.</p>
       </div>
     );
   }
 
   return (
-    <div className="mt-24 bg-gradient-to-br from-slate-50 to-slate-100 p-6 min-h-screen">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen pt-32 pb-20 bg-slate-50">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
 
         {/* ---------- Header ---------- */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-3 bg-[#00DC33] rounded-xl">
-              <Globe className="text-white" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-slate-800">
-                Explore Travelers
-              </h1>
-              <p className="text-slate-600">
-                Discover and join exciting travel plans
-              </p>
-            </div>
+        <div className="mb-12 text-center md:text-left">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-3">
+            <Globe className="w-4 h-4" />
+            <span>Global Community</span>
           </div>
-
-          {meta && (
-            <p className="text-sm text-slate-600">
-              <span className="font-bold">{meta.total}</span> public plans available
-            </p>
-          )}
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 font-display mb-4">
+            Explore <span className="text-primary">Travel Plans</span>
+          </h1>
+          <p className="text-slate-600 text-lg max-w-2xl">
+            Find your perfect travel buddy, join existing plans, or get inspired for your next adventure.
+          </p>
         </div>
 
-        {/* ---------- Search & Filter ---------- */}
-        <div className="bg-white p-6 rounded-2xl shadow-lg mb-8 flex flex-col md:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+        {/* ---------- Search & Filter Bar ---------- */}
+        <div className="bg-white p-4 rounded-2xl shadow-lg border border-slate-100 mb-10 flex flex-col md:flex-row gap-4 sticky top-24 z-30">
+          <div className="relative flex-1 group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
             <input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search destination, city or country"
-              className="w-full pl-12 py-3 border-2 rounded-xl focus:border-[#00DC33] outline-none"
+              placeholder="Search by destination (e.g., Paris, Bali)..."
+              className="w-full pl-12 py-3 bg-slate-50 border-transparent focus:bg-white border-2 focus:border-primary rounded-xl outline-none transition-all"
             />
           </div>
 
-          <div className="relative">
-            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+          <div className="relative min-w-[200px] group">
+            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="pl-12 pr-6 py-3 border-2 rounded-xl focus:border-[#00DC33]"
+              className="w-full pl-12 pr-10 py-3 bg-slate-50 border-transparent focus:bg-white border-2 focus:border-primary rounded-xl outline-none appearance-none cursor-pointer transition-all"
             >
               <option value="ALL">All Types</option>
-              <option value="SOLO">Solo</option>
-              <option value="FAMILY">Family</option>
-              <option value="COUPLE">Couple</option>
-              <option value="FRIENDS">Friends</option>
+              <option value="SOLO">Solo Adventure</option>
+              <option value="FAMILY">Family Trip</option>
+              <option value="COUPLE">Couples</option>
+              <option value="FRIENDS">Friends Group</option>
             </select>
           </div>
         </div>
 
-        {/* ---------- Cards ---------- */}
+        {/* ---------- Results Meta ---------- */}
+        {meta && (
+          <p className="text-sm text-slate-500 mb-6 font-medium">
+            Showing <span className="text-slate-900 font-bold">{meta.total}</span> travel plans
+          </p>
+        )}
+
+        {/* ---------- Cards Grid ---------- */}
         {travelPlans.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {travelPlans.map((plan: any) => (
-                <div
-                  key={plan.id}
-                  className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden hover:scale-105"
-                >
-                  {/* Image */}
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={plan.image}
-                      alt={plan.destination}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-
-                    {/* Status */}
-                    <div className="absolute top-4 right-4 flex items-center gap-2">
-                      <span
-                        className={`px-3 py-1 ${getStatusColor(
-                          plan.status
-                        )} text-white text-xs font-semibold rounded-full`}
-                      >
-                        {plan.status}
-                      </span>
-                      {getStatusIcon(plan.isActive)}
-                    </div>
-
-                    {/* Destination */}
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-2xl font-bold text-white mb-1">
-                        {plan.destination}
-                      </h3>
-                      <p className="text-white/90 text-sm flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {plan.city}, {plan.country}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-6 space-y-4">
-                    <p className="text-slate-600 text-sm line-clamp-2">
-                      {plan.description}
-                    </p>
-
-                    <div className="flex items-center gap-2 text-sm">
-                      <Users className="h-4 w-4 text-[#00DC33]" />
-                      <span className="font-semibold">Travel Type:</span>
-                      <span className="px-3 py-1 bg-[#00DC33]/10 text-[#00DC33] rounded-full text-xs font-semibold">
-                        {plan.travelType}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                      <Calendar className="h-4 w-4 text-[#00DC33]" />
-                      {formatDate(plan.startDate)} -{' '}
-                      {formatDate(plan.endDate)}
-                    </div>
-
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                      <DollarSign className="h-4 w-4 text-[#00DC33]" />
-                      <span className="font-bold text-[#00DC33]">
-                        ${plan.budgetMin} - ${plan.budgetMax}
-                      </span>
-                    </div>
-
-                    {/* User */}
-                    {plan.user && (
-                      <div className="pt-4 border-t border-slate-200 flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-[#00DC33] flex items-center justify-center text-white font-bold">
-                          {plan.user.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold">
-                            {plan.user.name}
-                          </p>
-                          <p className="text-xs text-slate-500">
-                            {plan.user.email}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-
-                    <Link href={`/explore-travelers/${plan.id}`}>
-  <button className="w-full mt-4 py-3 bg-gradient-to-r from-[#00DC33] to-[#00C32D] text-white font-semibold rounded-xl shadow-lg hover:scale-105 transition">
-    View Details
-  </button>
-</Link>
-
-                  </div>
-                </div>
+                <TravelPlanCard key={plan.id} plan={plan} />
               ))}
             </div>
 
             {/* ---------- Pagination ---------- */}
             {meta?.totalPage > 1 && (
-              <div className="flex justify-center gap-4 mt-10">
-                <button
+              <div className="flex justify-center gap-4 mt-16">
+                <Button
+                  variant="outline"
                   disabled={page === 1}
                   onClick={() => setPage((p) => p - 1)}
-                  className="px-5 py-2 border rounded-lg disabled:opacity-50"
+                  className="rounded-xl px-6"
                 >
-                  Prev
-                </button>
-                <span className="font-semibold">
+                  Previous
+                </Button>
+                <div className="flex items-center px-4 font-bold text-slate-900 bg-white rounded-xl border border-slate-200 shadow-sm">
                   Page {meta.page} of {meta.totalPage}
-                </span>
-                <button
+                </div>
+                <Button
+                  variant="outline"
                   disabled={page === meta.totalPage}
                   onClick={() => setPage((p) => p + 1)}
-                  className="px-5 py-2 border rounded-lg disabled:opacity-50"
+                  className="rounded-xl px-6"
                 >
                   Next
-                </button>
+                </Button>
               </div>
             )}
           </>
         ) : (
-          <div className="text-center py-20">
-            <h3 className="text-xl font-bold text-slate-700">
+          <div className="text-center py-32 bg-white rounded-3xl border border-dashed border-slate-200">
+            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
+              <Search size={40} />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-900 mb-2">
               No travel plans found
             </h3>
+            <p className="text-slate-500 max-w-md mx-auto">
+              We couldn't find any trips matching your search. Try adjusting your filters or search terms.
+            </p>
+            <Button
+              variant="link"
+              className="text-primary mt-4"
+              onClick={() => { setSearchTerm(''); setFilterType('ALL') }}
+            >
+              Clear all filters
+            </Button>
           </div>
         )}
       </div>
     </div>
   );
 }
+

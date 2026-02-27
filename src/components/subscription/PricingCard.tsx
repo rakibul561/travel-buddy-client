@@ -3,7 +3,6 @@
 
 import { Check, Loader2, X } from "lucide-react";
 import { useCreateSubscriptionMutation } from "../../redux/feature/travel/travel.api";
-
 import toast from "react-hot-toast";
 
 interface Feature {
@@ -38,7 +37,6 @@ export default function SubscriptionCard({
     try {
       const res = await createSubscription({ plan }).unwrap();
 
-      // Handle redirection based on response structure
       if (res.url) {
         window.location.href = res.url;
       } else if (res.data?.paymentUrl) {
@@ -46,10 +44,9 @@ export default function SubscriptionCard({
       } else {
         toast.success("Subscription successful!");
       }
-
-    } catch (error) {
+    } catch (error: any) {
       console.error("Subscription failed", error);
-      toast.error("Failed to initiate payment");
+      toast.error(error?.data?.message || "Please login to subscribe");
     }
   };
 
@@ -57,67 +54,63 @@ export default function SubscriptionCard({
 
   return (
     <div
-      className={`divide-y rounded-2xl border shadow-sm transition-all duration-300 ${popular ? "border-primary shadow-lg scale-105 bg-white z-10" : "border-gray-200 bg-white hover:border-primary/50"
+      className={`relative rounded-2xl border transition-all duration-300 overflow-hidden flex flex-col h-full ${popular
+        ? "border-blue-300 shadow-xl shadow-blue-100 scale-105 z-10 bg-white"
+        : "border-blue-100 bg-white hover:border-blue-300 hover:shadow-xl shadow-sm hover:-translate-y-1"
         }`}
     >
-      {/* Header */}
-      <div className="p-6">
-        <h2 className="text-xl font-bold text-gray-900 font-display">{title}</h2>
-
-        <p className="mt-2 text-sm text-gray-600">{description}</p>
-
-        <p className="mt-4 flex items-baseline gap-1">
-          <strong className="text-4xl font-bold text-gray-900">
+      {/* Header - Blue Block */}
+      <div className="bg-[#76abd5] p-6 text-white text-left">
+        <h3 className="text-base font-bold mb-3 font-display">{title}</h3>
+        <div className="flex items-baseline gap-1 mb-4">
+          <strong className="text-3xl font-bold tracking-tight">
             {price}
           </strong>
-          <span className="text-sm text-gray-600">{duration}</span>
-        </p>
+          {duration && <span className="text-sm font-medium opacity-80">{duration}</span>}
+        </div>
+        <p className="text-xs opacity-90 leading-relaxed max-w-[200px]">{description}</p>
+      </div>
+
+      {/* Features - White Block */}
+      <div className="p-6 flex flex-col flex-grow bg-white">
+        <ul className="space-y-3 mb-8 flex-grow">
+          {features.map((feature, index) => (
+            <li key={index} className="flex items-center gap-3 text-sm">
+              {feature.available ? (
+                <div className="flex-shrink-0 w-4 h-4 rounded-full border border-blue-400 flex items-center justify-center">
+                  <Check className="h-2.5 w-2.5 text-blue-400" strokeWidth={3} />
+                </div>
+              ) : (
+                <div className="flex-shrink-0 w-4 h-4 rounded-full border border-slate-300 flex items-center justify-center">
+                  <X className="h-2.5 w-2.5 text-slate-300" strokeWidth={3} />
+                </div>
+              )}
+              <span className={`text-[13px] ${feature.available ? 'text-slate-700 font-medium' : 'text-slate-400'}`}>
+                {feature.label}
+              </span>
+            </li>
+          ))}
+        </ul>
 
         <button
           onClick={handleSubscribe}
           disabled={isLoading || isCurrentPlan}
-          className={`mt-6 w-full rounded-xl px-4 py-3 text-sm font-bold text-white transition-all shadow-lg active:scale-95 disabled:opacity-60 disabled:pointer-events-none ${isCurrentPlan
-              ? "bg-gray-400 cursor-not-allowed"
-              : popular
-                ? "bg-primary hover:bg-primary/90 shadow-primary/25"
-                : "bg-gray-900 hover:bg-gray-800"
+          className={`w-full rounded-full py-3 text-sm font-bold transition-all ${isCurrentPlan
+            ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+            : "bg-[#76abd5] hover:bg-blue-500 text-white shadow-md hover:shadow-lg active:scale-95"
             }`}
         >
           {isLoading ? (
             <span className="flex items-center justify-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Redirecting...
+              Processing...
             </span>
           ) : isCurrentPlan ? (
-            "Current Plan"
+            "Active Plan"
           ) : (
-            "Get Started"
+            "Choose Plan"
           )}
         </button>
-      </div>
-
-      {/* Features */}
-      <div className="p-6 bg-gray-50/50 rounded-b-2xl">
-        <p className="text-sm font-bold text-gray-900 uppercase tracking-wide">
-          What's included:
-        </p>
-
-        <ul className="mt-4 space-y-3">
-          {features.map((feature, index) => (
-            <li key={index} className="flex items-center gap-3 text-sm">
-              {feature.available ? (
-                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Check className="h-3 w-3 text-primary" strokeWidth={3} />
-                </div>
-              ) : (
-                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
-                  <X className="h-3 w-3 text-gray-400" />
-                </div>
-              )}
-              <span className="text-gray-700 font-medium">{feature.label}</span>
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );

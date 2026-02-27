@@ -22,8 +22,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useAllUserFromDbQuery } from "../../../../../redux/feature/auth/auth.api";
-import { useGetAllpaymentQuery } from "../../../../../redux/feature/travel/travel.api";
+import { useGetAdminStatsQuery } from "../../../../../redux/feature/admin/adminApi";
 
 const COLORS = [
   "#6366F1",
@@ -67,65 +66,35 @@ const StatCard = ({
 
 /* ================= ANALYTICS PAGE ================= */
 const Analytics = () => {
-  const { data: userData } = useAllUserFromDbQuery(undefined);
-  console.log("the user data is ",userData )
-  const { data: transactionData } = useGetAllpaymentQuery(undefined);
+  const { data, isLoading } = useGetAdminStatsQuery(undefined);
+  const stats = data?.data;
 
-  const totalUsers = userData?.data?.meta?.total ?? 0;
-  const transactions = transactionData?.data ?? [];
-  const transactionCount = transactions.length;
-
-  const totalTransactionValue = transactions.reduce(
-    (sum: number, txn: any) => sum + (txn.amount ?? 0),
-    0
-  );
+  const totalUsers = stats?.totalUsers || 0;
+  const transactionCount = stats?.totalTravelPlans || 0; // Using travel plans for activity
+  const totalJoinRequests = stats?.totalJoinRequests || 0;
+  const completedTrips = stats?.completedTrips || 0;
+  const totalTransactionValue = stats?.totalRevenue || 0;
 
   const avgTransaction =
     transactionCount > 0
       ? totalTransactionValue / transactionCount
       : 0;
 
-  /* ===== Monthly Aggregation ===== */
-  const monthlyMap: Record<string, { amount: number; count: number }> = {};
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading stats...</div>;
+  }
 
-  transactions.forEach((txn: any) => {
-    const date = new Date(txn.createdAt);
-    const month = date.toLocaleString("default", { month: "short" });
-    const year = date.getFullYear();
-    const key = `${month} ${year}`;
+  /* Mock data for charts since we don't have time series data from the backend yet */
+  const monthlyTransactions = [
+    { month: "Jan", amount: totalTransactionValue * 0.1, count: Math.floor(transactionCount * 0.1) },
+    { month: "Feb", amount: totalTransactionValue * 0.2, count: Math.floor(transactionCount * 0.2) },
+    { month: "Mar", amount: totalTransactionValue * 0.7, count: Math.floor(transactionCount * 0.7) },
+  ];
 
-    if (!monthlyMap[key]) {
-      monthlyMap[key] = { amount: 0, count: 0 };
-    }
-
-    monthlyMap[key].amount += txn.amount ?? 0;
-    monthlyMap[key].count += 1;
-  });
-
-  const monthlyTransactions = Object.entries(monthlyMap).map(
-    ([month, data]) => ({
-      month,
-      amount: data.amount,
-      count: data.count,
-    })
-  );
-
-  /* ===== Wallet Distribution ===== */
-  const walletMap: Record<string, number> = {};
-
-  transactions.forEach((txn: any) => {
-    const wallet = txn.senderId ?? "Unknown";
-    if (!walletMap[wallet]) walletMap[wallet] = 0;
-    walletMap[wallet] += txn.amount ?? 0;
-  });
-
-  const walletPie = Object.entries(walletMap)
-    .map(([name, value]) => ({
-      name: name.length > 10 ? `${name.slice(0, 10)}...` : name,
-      value,
-      fullName: name,
-    }))
-    .slice(0, 6);
+  const pieData = [
+    { name: "Completed", value: completedTrips },
+    { name: "Pending", value: transactionCount - completedTrips > 0 ? transactionCount - completedTrips : 0 },
+  ];
 
   return (
     <div className="min-h-screen bg-[#FAF7F2]">
@@ -151,26 +120,26 @@ const Analytics = () => {
             color="from-blue-500 to-blue-600"
           />
           <StatCard
-            title="Total Transactions"
+            title="Total Travel Plans"
             value={transactionCount}
             icon={Activity}
             trend="+8.2%"
-            subtitle="All time"
+            subtitle="All time created"
             color="from-green-500 to-green-600"
           />
           <StatCard
-            title="Total Volume"
+            title="Total Revenue"
             value={`$${totalTransactionValue}`}
             icon={DollarSign}
             trend="+15.3%"
-            subtitle="Transaction volume"
+            subtitle="Generated revenue"
             color="from-purple-500 to-purple-600"
           />
           <StatCard
-            title="Average Transaction"
-            value={`$${avgTransaction.toFixed(2)}`}
+            title="Join Requests"
+            value={totalJoinRequests}
             icon={Wallet}
-            subtitle="Per transaction"
+            subtitle="All connection requests"
             color="from-orange-500 to-orange-600"
           />
         </div>
@@ -228,24 +197,24 @@ const Analytics = () => {
           <Card className="bg-white border border-gray-200 rounded-2xl shadow-sm">
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                Top Wallet Distribution
+                Trips Status Overview
               </h3>
               <p className="text-sm text-gray-500 mb-6">
-                User transaction volume breakdown
+                Completed vs Pending Trips
               </p>
 
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={walletPie}
+                      data={pieData}
                       dataKey="value"
                       nameKey="name"
                       innerRadius={60}
                       outerRadius={110}
                       paddingAngle={5}
                     >
-                      {walletPie.map((_e, i) => (
+                      {pieData.map((_e, i) => (
                         <Cell
                           key={i}
                           fill={COLORS[i % COLORS.length]}
